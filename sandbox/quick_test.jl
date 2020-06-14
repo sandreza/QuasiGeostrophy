@@ -37,7 +37,7 @@ plot!(legend = :topleft)
 
 
 ##
-n = m = 128
+n = m = 32
 A = lu(randn(m*n,m*n))
 b = ones(m*n)
 @btime A \ b

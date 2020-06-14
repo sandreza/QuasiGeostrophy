@@ -1,5 +1,6 @@
 """
 # Description
+
 Julia version of Spectral Methods in Matlab
 
 # Argument
@@ -8,6 +9,7 @@ Julia version of Spectral Methods in Matlab
 # Return
 - 'D': Chebyshev differentiation matrix
 - 'x': Guass-Lobatto points
+
 """
 function cheb(N)
     if N==0

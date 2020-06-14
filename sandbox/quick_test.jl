@@ -1,4 +1,4 @@
-using QuasiGeostrophy, LinearAlgebra, Plots
+using QuasiGeostrophy, LinearAlgebra, Plots, BenchmarkTools
 # Polynomial Order
 n = 16
 

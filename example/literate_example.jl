@@ -8,7 +8,6 @@ using TrialDocs, Plots
 # Now we use the functions in the module
 # Specifically the test_args_kw function
 
-test_args_kw(1, "tomorrow", ones(2,2), keyword = "my keyword")
 
 # ## Math
 # We can test some math

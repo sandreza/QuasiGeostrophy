@@ -6,6 +6,7 @@ makedocs(
     modules = [QuasiGeostrophy],
     pages = [
         "Home" => "index.md",
+        "Equations" => "equations.md",
     ],
     sitename = "QuasiGeostrophy"
 )

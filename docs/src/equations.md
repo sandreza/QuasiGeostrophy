@@ -19,7 +19,7 @@ The equations are
  q_N &= R \nabla^2 \psi_N + y - \frac{R L_y^2}{\delta_N L_T^2} \left\{ \frac{\psi_N - \psi_{N-1}}{\Delta \sigma_{N, N-1}}\right\}
  + \frac{f_0 d}{\beta L_y \delta_N}
 \end{aligned}
-```math
+```
 with
 ```math
 \begin{aligned}

@@ -18,10 +18,8 @@ function cheb(N)
         x = @. cos(pi*(0:N)/N);
         c = [2; ones(N-1); 2] .* (-1).^(0:N);
         dX = x .- x';
-        #off-diagonal entries
-        D =  (c ./ c') ./ (dX + I);
-        # diagonal entries
-        D = D - Diagonal(sum(D', dims = 1)[1:N+1])
+        D =  (c ./ c') ./ (dX + I);                # off-diagonal entries
+        D = D - Diagonal(sum(D', dims = 1)[1:N+1]) # diagonal entries
         return D, x
     end
 end

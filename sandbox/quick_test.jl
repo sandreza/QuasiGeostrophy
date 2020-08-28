@@ -34,10 +34,10 @@ plot(x, solution, label = "analytic")
 scatter!(x, y, label = "numerical")
 plot!(legend = :topleft)
 
-
-
 ##
 n = m = 32
 A = lu(randn(m*n,m*n))
 b = ones(m*n)
-@btime A \ b
+x = copy(b)
+@btime x = A \ b
+@btime ldiv!(x, A, b)

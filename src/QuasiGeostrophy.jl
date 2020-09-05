@@ -14,4 +14,9 @@ module QuasiGeostrophy
     # Spatial Discretization Includes
     export cheb
     export fourier_nodes, fourier_wavenumbers
+    
+    # Utility Includes
+    include("utils/utils.jl")
+    # Utility Exports
+    export appropriate_dims
 end # module

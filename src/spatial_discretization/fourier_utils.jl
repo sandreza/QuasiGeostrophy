@@ -1,5 +1,5 @@
+export fourier_points, fourier_wavenumbers 
 using FFTW
-
 """
 fourier_points(n; a = 0, b = 2π)
 
@@ -22,7 +22,7 @@ end
 
 
 """
-wavevec(N; L = 2π)
+fourier_wavenumbers(N; L = 2π)
 
 # Description
 - Create wavenumbers associated with the domain of length L

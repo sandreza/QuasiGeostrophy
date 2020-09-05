@@ -8,8 +8,10 @@ QuasiGeostrophy
 module QuasiGeostrophy
     # Using
     using LinearAlgebra
-    # Includes
-    include("SpatialDiscretization/nodal_chebyshev.jl")
-    # Exports
+    # Spatial Discretization Includes
+    include("spatial_discretization/nodal_chebyshev.jl")
+    include("spatial_discretization/fourier.jl")
+    # Spatial Discretization Includes
     export cheb
+    export fourier_nodes, fourier_wavenumbers
 end # module

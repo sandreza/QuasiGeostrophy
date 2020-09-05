@@ -1,1 +1,1 @@
-include("ode_solution.jl")
+include(pwd() * "/test/ode_solution.jl")

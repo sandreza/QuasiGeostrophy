@@ -30,14 +30,16 @@ y = A \ rhs
 # Exact solution
 solution = exp.( x .+ 1)
 
-plot(x, solution, label = "analytic")
+plot(x, solution, label = "analytic", xlabel = "x", ylabel = "solution")
 scatter!(x, y, label = "numerical")
 plot!(legend = :topleft)
 
 ##
+# performance check
 n = m = 32
 A = lu(randn(m*n,m*n))
 b = ones(m*n)
 x = copy(b)
 @btime x = A \ b
 @btime ldiv!(x, A, b)
+@btime ldiv!(A, b)

@@ -1,4 +1,4 @@
-# Nondimensional 2-Layer QG without Coriolis
+# Nondimensional 2-Layer QG without Beta
 These equations are from [The vortex gas scaling regime of baroclinic turbulence](https://www.pnas.org/content/117/9/4491) by Basile Gallet and Raffaele Ferrari.
 
 The equations are

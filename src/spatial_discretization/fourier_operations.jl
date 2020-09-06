@@ -26,9 +26,9 @@ function inv(a::FourierDerivative)
     inv_op = 1 ./ a.op 
     @inbounds for i in eachindex(inv_op)
         if abs(inv_op[i]) == Inf
-            inv_op[i] = 1.0
+            inv_op[i] = 0.0
         elseif isnan(norm(inv_op[i]))
-            inv_op[i] = 1.0
+            inv_op[i] = 0.0
         end
     end
     return FourierDerivative(inv_op)

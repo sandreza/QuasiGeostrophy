@@ -21,7 +21,8 @@ end
 """
 create_grid(grid_points, Ω::ProductDomain)
 # Description
-create a numerical grid with grid_points resolution in the domain Ω
+Create a numerical grid with grid_points resolution in the domain Ω \n 
+Only works for fully periodic grids at the moment
 # Arguments
 - `grid_points`: tuple | a tuple of ints in each direction for product domain
 - `Ω`: ProductDomain   | a product domain object

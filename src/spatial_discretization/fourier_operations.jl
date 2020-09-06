@@ -1,4 +1,5 @@
 export FourierDerivative
+export filter_convolve, convolve, box_filter
 
 import Base: *, ^, +, inv
 # Derivative Struct and Operations

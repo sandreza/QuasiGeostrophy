@@ -6,7 +6,7 @@ export AbstractBoundary
 
 export DomainBoundary
 export IntervalDomain, ProductDomain, Torus, Interval
-export ×, dim, info
+export ×, dim, info, check_full_periodicity
 
 abstract type AbstractDomain end
 abstract type AbstractBoundary end
@@ -77,4 +77,9 @@ function info(Ω::ProductDomain)
         println("The dimension $i domain is ", domain_string, " with length ", domain.b-domain.a)
     end
     return nothing
+end
+
+function check_full_periodicity(Ω::ProductDomain)
+    b = [Ω.domains[i].periodic for i in eachindex(Ω.domains)]
+    return prod(b)
 end

@@ -22,4 +22,7 @@ module QuasiGeostrophy
 
     # Symbolic Includes
     include("symbolics/abstract_core.jl")
+
+    # Grid Includes
+    include("grid/grid_core.jl")
 end # module

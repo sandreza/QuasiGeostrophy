@@ -1,7 +1,7 @@
 export fourier_points, fourier_wavenumbers 
 using FFTW
 """
-fourier_points(n; a = 0, b = 2π)
+fourier_nodes(n; a = 0, b = 2π)
 
 # Description
 - Create a uniform grid of points for periodic functions

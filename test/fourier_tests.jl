@@ -1,17 +1,11 @@
 using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools
 
 # boiler plate definitions
-Nx = 2^8
-Ny = 2^8
-ax = 0; bx = 2π; ay = 0; by = 4π
-gx  = fourier_nodes(Nx, a = ax, b = bx)
-gy  = fourier_nodes(Ny, a = ay, b = by)
-kx  = fourier_wavenumbers(Nx, L = bx - ax)
-ky  = fourier_wavenumbers(Ny, L = by - ay)
-x = reshape(gx, (Nx, 1))
-y = reshape(gy, (1, Ny))
-kx = reshape(kx, (Nx, 1))
-ky = reshape(ky, (1, Ny))
+Ωxy = Torus(0,2π) × Torus(0,4π)
+Nx = 2^8; Ny = 2^8;
+fourier_grid = create_grid((Nx, Ny), Ωxy)
+x, y = fourier_grid.grid
+kx, ky = fourier_grid.wavenumbers
 f = @. 2 * sin(x) + sin(2*y) + 0im
 ∂ˣf = @. 2 * cos(x) + 0im * y
 ∂ʸf = @. 2 * cos(2*y) + 0im * x

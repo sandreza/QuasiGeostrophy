@@ -2,7 +2,7 @@ using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 
 a = 0; b = 2π
 Ω = Torus(a,b) # Domain
-Nx = 2^8;
+Nx = 2^7;
 fourier_grid = create_grid(Nx, Ω) # Grid
 x = fourier_grid.grid
 kx = fourier_grid.wavenumbers
@@ -37,7 +37,7 @@ function step!(f̂, rhs, Δt)
     @. f̂ += Δt * rhsf
 end
 function imex_step!(f̂, rhs, Δt)
-    ff = filter_convolve(f̂, f̂, P, iP)
+    ff = convolve(f̂, f̂, P, iP)
     rhsf = -∂x(ff)
     @. f̂ += Δt * rhsf
     lhsf = 1 .- Δt .* ν .* (∂x^2).op
@@ -49,17 +49,18 @@ f̂ = copy(f)
 mul!(f̂, P, f)
 for i in 1:2π*200
     local Δt = 0.001
-    #step!(f̂, new_rhs, Δt)
+    # step!(f̂, new_rhs, Δt)
     imex_step!(f̂, new_rhs, Δt)
     if (i%100) == 0
         mul!(f, iP, f̂)
-        p1 = plot(x, real.(f), ylims = (0,1))
-        p2 = scatter(log.(abs.(f̂))[1:div(length(f̂),2)+1], label = "spectrum", ylims = (-7, 3))
+        p1 = plot(x, real.(f), ylims = (0,1), label = "real space", xlabel = "position", ylabel  = "amplitude")
+        p2 = scatter(log.(abs.(f̂))[1:div(length(f̂),2)+1], label = "spectrum", ylims = (-7, 3), xlabel = "wavenumber", ylabel = "spectral amplitude")
         display(plot(p1,p2))
         sleep(0.1)
     end
 end
 ##
+gr(size = (250,400))
+p1 = plot(x, real.(f), ylims = (0,1), label = "real space", xlabel = "position", ylabel  = "amplitude")
+p2 = scatter(log.(abs.(f̂))[1:div(length(f̂),2)+1], label = "spectrum", ylims = (-7, 3), xlabel = "wavenumber", ylabel = "spectral amplitude")
 
-plot(x, real.(f), ylims = (0,1))
-plot!(x, real.(iP * tmp))

@@ -1,0 +1,146 @@
+using QuasiGeostrophy
+
+abstract type SpatialDiscretization <: AbstractExpression end
+abstract type TimeDiscretization <: AbstractExpression end
+struct Fourier <: SpatialDiscretization end
+struct Time <: TimeDiscretization end
+
+struct AB1 <: TimeDiscretization end
+struct BDF1 <: TimeDiscretization end
+
+struct Explicit{T,S} <: TimeDiscretization
+    operand::T
+    meta_data::S
+end
+
+struct Implicit{T,S} <: TimeDiscretization
+    operand::T
+    meta_data::S
+end
+
+struct AbstractEquation{T,S} <: AbstractExpression
+    lhs::T
+    rhs::S
+end
+struct Wrapper{T, S} <: AbstractExpression
+    data::T
+    meta_data::S
+end
+# Struct for MetaData
+struct MetaData{T}
+    io_name::T
+end
+struct GradientMetaData{T}
+    direction::T
+end
+function Base.show(io::IO, field::Wrapper{T, S}) where {T, S <: MetaData}
+    color = 226
+    printstyled(io, field.meta_data.io_name, color = color)
+end
+
+u = Wrapper("u", MetaData("u"))
+ν = Wrapper(0.001, MetaData("ν"))
+∂x(u) = Gradient(u, GradientMetaData("x"))
+∂t(u) = Gradient(u, GradientMetaData("t"))
+∂x(u)
+##
+function Base.show(io::IO, ∇::Gradient) 
+    color = 220
+    printstyled(io, "∇(", color = color)
+    print(∇.operand)
+    printstyled(io, ")", color = color)
+end
+
+function Base.show(io::IO, ∇::Gradient) 
+    color = 220
+    printstyled(io, "∇(", color = color)
+    print(∇.operand)
+    printstyled(io, ")", color = color)
+end
+
+function Base.show(io::IO, ∇::Gradient{T,S}) where {T, S <: GradientMetaData}
+    color = 220
+    tmp = ∇.metadata.direction
+    printstyled(io, "∂", tmp, "(", color = color)
+    print(∇.operand)
+    printstyled(io, ")", color = color)
+end
+
+function Base.show(io::IO, ϕ::Field) 
+    color = 220
+    print(ϕ.data)
+end
+##
+import Base: ==
+
+function ==(a::AbstractExpression, b::AbstractExpression)
+    return AbstractEquation(a,b)
+end
+
+function Base.show(io::IO, eq::AbstractEquation) 
+    color = 118
+    print(io, eq.lhs)
+    printstyled(io, "=", color = color)
+    print(io, eq.rhs)
+end
+
+function Base.show(io::IO, eq::Implicit) 
+    print(io, eq.operand)
+end
+function Base.show(io::IO, eq::Explicit) 
+    print(io, eq.operand)
+end
+
+function Base.show(io::IO, system::Array{T}) where {T <: AbstractEquation}
+    for equation in system
+        print(io, equation)
+    end
+end
+
+∂t(u) == -∂x(u*u) + ν * ∂x(∂x(u)) 
+
+pde_equation = [
+    Implicit(∂t(u), BDF1()) == Explicit(-∂x(u*u), AB1()) + Implicit(ν * ∂x(∂x(u)) , BDF1())
+]
+
+## Implicit / Explicit grabbing rules.
+# Assumes seperation by addition should be okay since quadrature is a 
+# linear operation
+function get_implicit(a::Implicit)
+    return a
+end
+function get_implicit(a::Explicit)
+    return 0 # probably need a rule like 0 + field = field
+end
+function get_implicit(a::Add)
+    t1 = get_implicit(a.term1)
+    t2 = get_implicit(a.term2)
+    return t1 + t2
+end
+
+function get_explicit(a::Explicit)
+    return a
+end
+
+function get_explicit(a::Implicit)
+    return 0 # probably need a rule like 0 + field = field
+end
+
+function get_explicit(a::Add) 
+    t1 = get_explicit(a.term1)
+    t2 = get_explicit(a.term2)
+    return t1 + t2
+end
+
+function get_implicit(eq::AbstractEquation)
+    # place all implicit terms on left-hand side
+    implicit = get_implicit(eq.lhs) - get_implicit(eq.rhs)
+    # place all explicit terms on right-hand side
+    explicit = -get_explicit(eq.lhs) + get_implicit(eq.rhs)
+    return implicit == explicit
+end
+##
+tmp_expr = Explicit(-∂x(u*u), AB1()) + Implicit(ν * ∂x(∂x(u)) , BDF1()) + Explicit(-∂x(u*u), AB1()) + Explicit(-∂x(u*u), AB1()) 
+tmp_implicit = get_implicit(tmp_expr)
+tmp_implicit = get_explicit(tmp_expr)
+new_eq  = get_implicit(Implicit(∂t(u), BDF1()) == Explicit(-∂x(u*u), AB1()) + Implicit(ν * ∂x(∂x(u)) , BDF1()))

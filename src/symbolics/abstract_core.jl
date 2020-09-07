@@ -1,5 +1,5 @@
 export unary_operators, binary_operators, compute
-export AbstractExpression
+export AbstractExpression, Gradient
 
 # Define abstract base type
 abstract type AbstractExpression end

@@ -94,7 +94,7 @@ end
 
 function Base.show(io::IO, system::Array{T}) where {T <: AbstractEquation}
     for equation in system
-        print(io, equation)
+        println(io, equation)
     end
 end
 
@@ -174,3 +174,12 @@ pde_system[2]
 new_system = get_imex(pde_system)
 eq1 = pde_system[1]
 eq2 = pde_system[2]
+println("The system of equations are")
+for equation in pde_system
+    println(equation)
+end
+println("The new system with all implicit terms 
+         on the left and explicit on the right is")
+for equation in new_system
+    println(equation)
+end

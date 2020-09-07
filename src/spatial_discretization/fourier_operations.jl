@@ -36,10 +36,10 @@ function inv(a::FourierDerivative)
 end
 
 # Filters
-function box_filter(û)
+function box_filter(û; pm = 6)
     n = length(û)
     mid = div(n, 2) + 1
-    pm  = div(n, 6)
+    pm  = div(n, pm)
     u = copy(û)
     u[mid - pm : mid + pm] .= 0.0
     return u
@@ -52,9 +52,9 @@ function convolve(û, v̂, P, iP)
     return P * (u .* v)
 end
 
-function filter_convolve(û, v̂, P, iP)
-    u = box_filter(û)
-    v = box_filter(v̂)
+function filter_convolve(û, v̂, P, iP; pm = 6)
+    u = box_filter(û, pm = pm)
+    v = box_filter(v̂, pm = pm)
     u = iP * u
     v = iP * v
     return P * (u .* v)

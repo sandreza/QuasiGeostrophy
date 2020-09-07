@@ -23,7 +23,7 @@ for unary_operator in unary_operators
     @eval function Base.show(io::IO, operation::$b_name{𝒮}) where {𝒮}
         print(io, $b_symbol, "(", operation.term, ")")
     end
-    @eval export $b_name
+    @eval export $b_name, $b_symbol
 end
 
 for binary_operator in binary_operators
@@ -41,5 +41,5 @@ for binary_operator in binary_operators
         print(io,  operation.term2)
         printstyled(io, ")", color = color)
     end
-    @eval export $b_name
+    @eval export $b_name, $b_symbol
 end

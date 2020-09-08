@@ -19,9 +19,19 @@ function ^(p::FourierDerivative, α::Number)
     return FourierDerivative(p.op.^(α))
 end
 
+function *(p::FourierDerivative, α::Number)
+    return FourierDerivative(p.op.*(α))
+end
+*(q::Number, p::FourierDerivative) = *(p, q)
+
+
 function +(p::FourierDerivative, q::FourierDerivative)
     return FourierDerivative(p.op .+ q.op)
 end
+function +(p::FourierDerivative, q::Number)
+    return FourierDerivative(p.op .+ q)
+end
++(q::Number, p::FourierDerivative) = +(p, q)
 
 function inv(a::FourierDerivative)
     inv_op = 1 ./ a.op 

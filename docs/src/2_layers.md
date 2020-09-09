@@ -5,9 +5,9 @@ The equations are
 
 ```math
 \begin{aligned}
-\partial_t q_1 &= - J(\psi_1 , q_1) - \nu \Delta^4 q_1 + Q \sin( y / L)
+\partial_t q_1 &= - J(\psi_1 , q_1) - U \partial_x q_1 - \frac{U}{\lambda^2}\partial_x \psi_1 - \nu \Delta^4 q_1 + Q \sin( y / L)
 \\
-\partial_t q_2 &= - J(\psi_2 , q_2) - \nu \Delta^4 q_2 - 2 \kappa \nabla^2 \psi_2 - Q \sin( y / L)
+\partial_t q_2 &= - J(\psi_2 , q_2) + U \partial_x q_2 + \frac{U}{\lambda^2}\partial_x \psi_2  - \nu \Delta^4 q_2 - 2 \kappa \Delta \psi_2 - Q \sin( y / L)
 \\
  q_1 &= \nabla^2 \psi_1 + \frac{1}{2 \lambda} (\psi_2 - \psi_1)
  \\

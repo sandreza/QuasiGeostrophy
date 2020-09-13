@@ -82,6 +82,7 @@ function closure_rhs(∂x, ∂y, Δ, Δ⁵, J, λ, ν, U, κ, forcing)
     end
 end
 
+
 rhs = closure_rhs(∂x, ∂y, Δ, Δ⁵, J, λ, ν, U, κ, f̂)
 
 function closure_lhs(∂x, ∂y, Δ, Δ⁵, J, λ, ν, U, Δt)
@@ -105,7 +106,6 @@ function imex_step!(state, lhs_operator, rhs, Δt)
 end
 # @btime imex_step!(state, lhs_operator, rhs, Δt);
 
-
 ##
 q1 = @. 1 * sin(x) - cos(y) + 0im
 q2 = @. 1 * sin(x) + sin(y) + 0im
@@ -124,7 +124,7 @@ for i in 1:2000
     if (i%100) == 0
         @. τ̂ = (fq1 - fq2) / 2
         mul!(τ, iP, τ̂)
-        local p1 = contourf(x[:],y[:], real.(τ)', linewidth = 0, color = :thermometer)
+        local p1 = contourf(x[:], y[:], real.(τ)', linewidth = 0, color = :thermometer)
         local p2 = plot(sum(real.(τ), dims = 1)[:] ./ Nx, x[:] )
         display(plot(p1,p2))
         sleep(0.01)

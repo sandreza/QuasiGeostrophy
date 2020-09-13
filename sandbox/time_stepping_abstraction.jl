@@ -13,6 +13,16 @@ struct Explicit{T,S} <: TimeDiscretization
     meta_data::S
 end
 
+function extract(a, b)
+    if typeof(a) <: b
+        return a
+    else
+        return Field(0)
+    end
+    return nothing
+end
+
+##
 struct Implicit{T,S} <: TimeDiscretization
     operand::T
     meta_data::S

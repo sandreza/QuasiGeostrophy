@@ -1,7 +1,7 @@
 export FourierDerivative
 export filter_convolve, convolve, box_filter
 
-import Base: *, ^, +, inv
+import Base: *, ^, +, inv, - 
 # Derivative Struct and Operations
 struct FourierDerivative{T}
     op::T
@@ -30,6 +30,9 @@ function +(p::FourierDerivative, q::FourierDerivative)
 end
 function +(p::FourierDerivative, q::Number)
     return FourierDerivative(p.op .+ q)
+end
+function -(p::FourierDerivative)
+    return FourierDerivative( -(p.op))
 end
 +(q::Number, p::FourierDerivative) = +(p, q)
 

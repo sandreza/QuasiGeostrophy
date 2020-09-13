@@ -14,6 +14,7 @@ P = plan_fft(f) # typeof(iP) <: AbstractFFTs.ScaledPlan
 iP = plan_ifft(f)
 mul!(f̂, P, f)
 ∂x = FourierDerivative(im .* kx)
+argmax(real.((-∂x^2 - ∂x^4).op))
 
 function closure_rhs(∂x, P, iP)
     function closed_rhs(state)

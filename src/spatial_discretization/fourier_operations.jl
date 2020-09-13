@@ -34,6 +34,7 @@ end
 function -(p::FourierDerivative)
     return FourierDerivative( -(p.op))
 end
+-(p::FourierDerivative, q::FourierDerivative) = p + (-q)
 +(q::Number, p::FourierDerivative) = +(p, q)
 
 function inv(a::FourierDerivative)

@@ -2,28 +2,9 @@ using QuasiGeostrophy
 using Test
 import QuasiGeostrophy:compute
 
-# Quick Structs for checking calculations
-struct Wrapper{T, S} <: AbstractExpression
-    data::T
-    meta_data::S
-end
-# Struct for MetaData
-struct MetaData{T}
-    io_name::T
-end
-function Base.show(io::IO, field::Wrapper{T, S}) where {T <: Char, S}
-    color = 230
-    printstyled(io, field.data, color = color)
-end
-function Base.show(io::IO, field::Wrapper{T, S}) where {T, S <: MetaData}
-    color = 230
-    printstyled(io, field.meta_data.io_name, color = color)
-end
+include(pwd() * "/test/test_utils.jl")
 
-a = Wrapper(1, MetaData("a"))
-b = Wrapper(2, MetaData("b"))
-
-compute(a::Wrapper) = a.data
+@wrapper a=1 b=2 
 
 @testset "Impero operator matching" begin
 

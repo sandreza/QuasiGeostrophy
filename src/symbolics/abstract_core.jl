@@ -12,6 +12,10 @@ include("abstract_domains.jl")
 include("abstract_fields.jl")
 # Define Data
 include("abstract_data.jl")
+# Define Equations
+include("abstract_equations.jl")
+# Hook to Symbolic Utils
+include("symbolic_utils_hooks.jl")
 
 # compute function
 compute(a::AbstractExpression) = throw(error("compute not defined for $(typeof(a))"))

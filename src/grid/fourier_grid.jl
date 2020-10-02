@@ -44,7 +44,8 @@ function create_grid(grid_points, Ω::ProductDomain) # change to be fully genera
 end
 
 function Base.show(io::IO, F::FourierGrid) 
-    print("domain:", F.domain, " gridpoints:")
+    println("domain:", F.domain)
+    print("gridpoints:")
     if typeof(F.grid[1]) <: AbstractArray
         for (i, grid) in enumerate(F.grid)
             print(length(grid))

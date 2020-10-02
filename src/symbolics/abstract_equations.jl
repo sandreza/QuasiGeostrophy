@@ -10,7 +10,6 @@ mutable struct Equation <: AbstractEquation
     rhs
 end
 
-# without esc it becomes QuasiGeostrophy.lhs, etc.
 function _to_equation(expr)
     lhs = expr.args[1]
     rhs = expr.args[2]
@@ -35,11 +34,4 @@ end
 
 function Base.show(io::IO, p::Equation)
     print(io, p.lhs, "=", p.rhs)
-end
-
-function _to_equation2(expr)
-    lhs = expr.args[1]
-    rhs = expr.args[2]
-    new_expr = :(Equation($lhs, $rhs))
-    return new_expr
 end

@@ -4,15 +4,15 @@ a = 0; b = 2π
 Ω = Torus(a,b) # Domain
 Nx = 2^7;
 fourier_grid = create_grid(Nx, Ω) # Grid
-x = fourier_grid.grid
-kx = fourier_grid.wavenumbers
+x = fourier_grid.grid[1]
+kx = fourier_grid.wavenumbers[1]
 f = @. exp(-2 * (b-a) / 3 * (x - (b-a)/2)^2)*(1+0im)
 f̂ = copy(f)
 FFTW.set_num_threads(Threads.nthreads())
 P = plan_fft(f) # typeof(iP) <: AbstractFFTs.ScaledPlan
 iP = plan_ifft(f)
 mul!(f̂, P, f)
-∂x = FourierDerivative(im .* kx)
+∂x = FourierOperator(im .* kx)
 ν = 0.01
 
 function rhs(f̂, ∂x, P, iP, ν)

@@ -61,7 +61,7 @@ function inv(a::FourierOperator)
             inv_op[i] = 0.0
         end
     end
-    return Operator(inv_op)
+    return FourierOperator(inv_op)
 end
 
 # Filters

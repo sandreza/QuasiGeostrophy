@@ -16,6 +16,7 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
         contourf!(xlabel = "x")
         contourf!(ylabel = "y")
         contourf!(title =  ϕ.metadata.name)
+        contourf!(linewidth = 0, color = :thermometer)
     else
         print("Plotting is not supported for fields ")
         print("with dimensions greater ≥ 3")

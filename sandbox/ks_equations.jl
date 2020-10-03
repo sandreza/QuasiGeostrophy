@@ -1,19 +1,20 @@
-using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
+using QuasiGeostrophy
+using LinearAlgebra, FFTW, BenchmarkTools, Plots
 
 a = 0; b = 22.0
 const Δt = 1e-1 / 2
 Ω = Torus(a,b) # Domain
 Nx = 2^6;
 fourier_grid = create_grid(Nx, Ω) # Grid
-x = fourier_grid.grid
-kx = fourier_grid.wavenumbers
+x = fourier_grid.grid[1]
+kx = fourier_grid.wavenumbers[1]
 f = @. sin( 4 * 2π * x / (b-a)) + 0im
 f̂ = copy(f)
 FFTW.set_num_threads(Threads.nthreads())
 P = plan_fft(f) # typeof(iP) <: AbstractFFTs.ScaledPlan
 iP = plan_ifft(f)
 mul!(f̂, P, f)
-∂x = FourierDerivative(im .* kx)
+∂x = FourierOperator(im .* kx)
 argmax(real.((-∂x^2 - ∂x^4).op))
 
 function closure_rhs(∂x, P, iP)
@@ -24,7 +25,7 @@ function closure_rhs(∂x, P, iP)
     end
 end
 
-rhs = closure_rhs(∂x, P, iP)
+ks_rhs = closure_rhs(∂x, P, iP)
 
 function closure_lhs(∂x, Δt)
     function lhs()
@@ -33,8 +34,8 @@ function closure_lhs(∂x, Δt)
     end
 end
 
-lhs = closure_lhs(∂x, Δt)
-operators = lhs()
+ks_lhs = closure_lhs(∂x, Δt)
+operators = ks_lhs()
 lhs_operator = [inv(operator) for operator in operators]
 
 function imex_step!(state, lhs_operator, rhs, Δt)
@@ -55,7 +56,7 @@ total_array = zeros(length(f), nsteps)
 ##
 gr(size = (400,400))
 for i in 1:nsteps
-    imex_step!(state, lhs_operator, rhs, Δt)
+    imex_step!(state, lhs_operator, ks_rhs, Δt)
     u = state[1]
     total_array[:, i] .= real.(iP * u)
     if (i%100) == 0

@@ -2,16 +2,10 @@ using QuasiGeostrophy, Plots, FFTW, BenchmarkTools
 using LinearAlgebra
 import Plots: plot
 import QuasiGeostrophy: compute
-import Base: * 
-# include(pwd() * "/test/test_utils.jl")
 
 struct FourierField{D,S}
     data::D
     metadata::S
-end
-
-function Base.show(io::IO, ϕ::FourierField{S,T}) where {S, T <: FourierMetaData}
-    printstyled(io, ϕ.metadata.name, color = 128 )
 end
 
 struct FourierMetaData{𝒩, 𝒢, 𝒯} <: AbstractMetaData 
@@ -19,6 +13,12 @@ struct FourierMetaData{𝒩, 𝒢, 𝒯} <: AbstractMetaData
     grid::𝒢
     transform::𝒯
 end
+
+function Base.show(io::IO, ϕ::FourierField{S,T}) where {S, T <: FourierMetaData}
+    printstyled(io, ϕ.metadata.name, color = 128 )
+end
+
+
 
 struct Transform{ℱ, ℬ}
     forward::ℱ
@@ -61,6 +61,7 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
         contourf(x, y, real.(dd)')
         contourf!(xlabel = "x")
         contourf!(ylabel = "y")
+        contourf!(title =  ϕ.metadata.name)
     else
         print("Plotting is not supported for fields ")
         print("with dimensions greater ≥ 3")
@@ -77,7 +78,7 @@ x, y = fourier_grid.grid
 kx, ky = fourier_grid.wavenumbers
 fourier_transform = Transform(fourier_grid)
 
-fmd = FourierMetaData("ϕ", fourier_grid, fourier_transform)
+fmd  = FourierMetaData("ϕ ", fourier_grid, fourier_transform)
 fmd1 = FourierMetaData("ϕ1", fourier_grid, fourier_transform)
 fmd2 = FourierMetaData("ϕ2", fourier_grid, fourier_transform)
 fmd3 = FourierMetaData("ϕ3", fourier_grid, fourier_transform)
@@ -174,6 +175,8 @@ compute(tt)
 evaluate(tt)
 
 ## Check Calculus
+
+## Perhaps Define Operator Object
 function (p::FourierDerivative)(ϕ::FourierField) 
     return ϕ(*(p, ϕ.data), ϕ.metadata)
 end

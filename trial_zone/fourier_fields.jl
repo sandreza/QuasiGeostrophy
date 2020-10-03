@@ -3,11 +3,15 @@ using LinearAlgebra
 import Plots: plot
 import QuasiGeostrophy: compute
 import Base: * 
-include(pwd() * "/test/test_utils.jl")
+# include(pwd() * "/test/test_utils.jl")
 
 struct FourierField{D,S}
     data::D
     metadata::S
+end
+
+function Base.show(io::IO, ϕ::FourierField{S,T}) where {S, T <: FourierMetaData}
+    printstyled(io, ϕ.metadata.name, color = 128 )
 end
 
 struct FourierMetaData{𝒩, 𝒢, 𝒯} <: AbstractMetaData 
@@ -62,6 +66,8 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
         print("with dimensions greater ≥ 3")
     end
 end
+
+plot(ϕ::Field{S, T}) where {S <: FourierField, T} = plot(ϕ.data)
 ##
 
 Ωxy = Torus(0,2π) × Torus(0,2π)
@@ -72,6 +78,9 @@ kx, ky = fourier_grid.wavenumbers
 fourier_transform = Transform(fourier_grid)
 
 fmd = FourierMetaData("ϕ", fourier_grid, fourier_transform)
+fmd1 = FourierMetaData("ϕ1", fourier_grid, fourier_transform)
+fmd2 = FourierMetaData("ϕ2", fourier_grid, fourier_transform)
+fmd3 = FourierMetaData("ϕ3", fourier_grid, fourier_transform)
 f1 = @. sin(x) + 0im * y
 f2 = @. sin(y) + 0im * x
 f3 = @. sin(x) * sin(y)
@@ -79,9 +88,9 @@ f1 = fourier_transform.forward * f1
 f2 = fourier_transform.forward * f2
 f3 = fourier_transform.forward * f3
 ϕ = FourierField(f1, fmd)
-ϕ1 = FourierField(f1, fmd)
-ϕ2 = FourierField(f2, fmd)
-ϕ3 = FourierField(f3, fmd)
+ϕ1 = FourierField(f1, fmd1)
+ϕ2 = FourierField(f2, fmd2)
+ϕ3 = FourierField(f3, fmd3)
 
 ##
 @btime forward(ϕ);
@@ -90,31 +99,85 @@ dd = ϕ.data
 @btime fwd * dd;
 
 ##
+# Define Closed Operations for FourierField
+
 for unary_operator in unary_operators
     b_symbol = Meta.parse.(unary_operator[2]) #broadcast
     @eval import Base: $b_symbol
-    @eval $b_symbol(field1::FourierField) where {𝒯} = FourierField(broadcast($b_symbol, field1.data), field1.metadata)
+    @eval function $b_symbol(field1::FourierField)
+        data = broadcast($b_symbol, field1.data)
+        metadata  = field1.metadata
+        symbname = string($b_symbol)
+        name = symbname * "(" * field1.metadata.name * ")"
+        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+        FourierField(data, fmd )
+    end
 end
-
+##
 for binary_operator in [binary_operators..., ["Negative", "-"]]
     b_symbol = Meta.parse.(binary_operator[2]) #broadcast
     @eval import Base: $b_symbol
-    @eval $b_symbol(field1::FourierField, field2::FourierField) = FourierField(broadcast($b_symbol, field1.data, field2.data), field1.metadata)
-    @eval $b_symbol(field1::FourierField, field2::𝒮) where {𝒮} =  FourierField(broadcast($b_symbol,field1.data, field2), field1.metadata)
-    @eval $b_symbol(field1::𝒯, field2::FourierField) where {𝒯} =  FourierField(broadcast($b_symbol, field1, field2.data), field2.metadata)
-    # otherwise there is a method error, data wrapper makes it a closed system
-    #@eval $b_symbol(field1::AbstractData, field2::𝒮) where {𝒮 <: Number} = Data(broadcast($b_symbol,field1.data, field2))
-    #@eval $b_symbol(field1::𝒯, field2::AbstractData) where {𝒯 <: Number} = Data(broadcast($b_symbol, field1, field2.data))
+    @eval function $b_symbol(field1::FourierField, field2::FourierField)
+        data = broadcast($b_symbol, field1.data, field2.data)
+        metadata  = field1.metadata
+        symbname = string($b_symbol)
+        name1 = field1.metadata.name 
+        name2 = field2.metadata.name 
+        name = "(" * name1 * symbname * name2 * ")"
+        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+        return FourierField(data, fmd)
+    end
+    @eval function $b_symbol(field1::FourierField, field2::𝒮) where {𝒮}
+        data = broadcast($b_symbol, field1.data, field2)
+        metadata  = field1.metadata
+        symbname = string($b_symbol)
+        name1 = field1.metadata.name 
+        name2 = string(field2)
+        name = "(" * name1 * symbname * name2 * ")"
+        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+        return FourierField(data, fmd)
+    end
+    @eval function $b_symbol(field1::𝒯, field2::FourierField) where {𝒯}
+        data = broadcast($b_symbol, field1, field2.data)
+        metadata  = field2.metadata
+        symbname = string($b_symbol)
+        name1 = string(field1)
+        name2 = field2.metadata.name 
+        name = "(" * name1 * symbname * name2 * ")"
+        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+        return FourierField(data, fmd)
+    end
 end
 # overwrite multiplication
-
 function *(f̂::FourierField, ĝ::FourierField)
     fwd = f̂.metadata.transform.forward
     bwd = f̂.metadata.transform.backward
     f = bwd * f̂.data
     g = bwd * ĝ.data
     fg = broadcast(*, f, g)
-    return FourierField(fwd * fg, f̂.metadata)
+    metadata  = ĝ.metadata
+    name1 = f̂.metadata.name
+    name2 = ĝ.metadata.name 
+    name = "(" * name1 * "*" * name2 * ")"
+    fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+    return FourierField(fwd * fg, fmd)
 end
-##
+
+## Check Algebra
 norm((ϕ1 * ϕ2 - ϕ3).data)/norm((ϕ3).data)
+
+f_ϕ1 = Field(ϕ1, BasicMetaData("ϕ1"))
+f_ϕ2 = Field(ϕ2, BasicMetaData("ϕ2"))
+tt =  2 * f_ϕ1 + f_ϕ2 * f_ϕ1 + 2 + tanh(f_ϕ1) + 2*2
+compute(a::FourierField) = a
+compute(tt)
+evaluate(tt)
+
+## Check Calculus
+function (p::FourierDerivative)(ϕ::FourierField) 
+    return ϕ(*(p, ϕ.data), ϕ.metadata)
+end
+
+function Base.show(io::IO, ϕ::Gradient{S,T}) where {S, T <: FourierMetaData}
+    printstyled(io, ϕ.metadata.name, color = 128 )
+end

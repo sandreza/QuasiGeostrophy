@@ -1,4 +1,5 @@
-using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
+using QuasiGeostrophy
+using LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 
 # boiler plate definitions
 Ωxy = Torus(0,2π) × Torus(0,2π)
@@ -34,8 +35,8 @@ f̂ = copy(forcing)
 mul!(f̂, P, forcing)
 
 ## Define Operators
-∂x = FourierDerivative(im .* kx)
-∂y = FourierDerivative(im .* ky)
+∂x = FourierOperator(im .* kx)
+∂y = FourierOperator(im .* ky)
 Δ = ∂x^2 + ∂y^2
 Δ⁵ = Δ^5
 G = inv( (Δ + -1 /(2*λ^2) )^2 + -(1/(2*λ^2))^2 )

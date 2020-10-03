@@ -30,8 +30,8 @@ f̂ = copy(forcing)
 mul!(f̂, P, forcing)
 
 ## Define Operators
-∂x = FourierDerivative(im .* kx)
-∂y = FourierDerivative(im .* ky)
+∂x = FourierOperator(im .* kx)
+∂y = FourierOperator(im .* ky)
 Δ = ∂x^2 + ∂y^2
 Δ⁻¹ = inv(Δ)
 

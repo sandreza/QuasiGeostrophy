@@ -19,7 +19,7 @@ export fourier_nodes, fourier_wavenumbers
 # Utility Includes
 include("utils/utils.jl")
 # Utility Exports
-export appropriate_dims
+export appropriate_dims, plot
 
 # Symbolic Includes
 include("symbolics/abstract_core.jl")

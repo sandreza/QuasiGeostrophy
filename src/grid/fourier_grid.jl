@@ -15,7 +15,7 @@ function create_grid(grid_points, Ω::IntervalDomain) # perhaps change to match 
     @assert Ω.periodic
     grid = fourier_nodes(grid_points, a = Ω.a, b = Ω.b)
     wavenumbers = fourier_wavenumbers(grid_points, L = Ω.b - Ω.a)
-    return FourierGrid(grid, wavenumbers, Ω)
+    return FourierGrid([grid], [wavenumbers], Ω)
 end
 
 """

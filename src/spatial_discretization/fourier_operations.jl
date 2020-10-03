@@ -1,43 +1,58 @@
-export FourierDerivative
+export FourierOperator
 export filter_convolve, convolve, box_filter
 
 import Base: *, ^, +, inv, - 
 # Derivative Struct and Operations
-struct FourierDerivative{T}
+struct FourierOperator{T, S}
     op::T
+    metadata::S
 end
+FourierOperator(a) = FourierOperator(a, nothing)
 
-function *(∂x::FourierDerivative, ϕ::AbstractArray)
+function *(∂x::FourierOperator, ϕ::AbstractArray)
     return ∂x.op .* ϕ
 end
 
-function (p::FourierDerivative)(ϕ::AbstractArray)
+function (p::FourierOperator)(ϕ::AbstractArray)
     return *(p, ϕ)
 end
 
-function ^(p::FourierDerivative, α::Number)
-    return FourierDerivative(p.op.^(α))
+function ^(p::FourierOperator, α::Number)
+    return FourierOperator(p.op.^(α))
 end
 
-function *(p::FourierDerivative, α::Number)
-    return FourierDerivative(p.op.*(α))
+function *(p::FourierOperator, α::Number)
+    return FourierOperator(p.op.*(α))
 end
-*(q::Number, p::FourierDerivative) = *(p, q)
+*(q::Number, p::FourierOperator) = *(p, q)
 
 
-function +(p::FourierDerivative, q::FourierDerivative)
-    return FourierDerivative(p.op .+ q.op)
+function +(p::FourierOperator, q::FourierOperator)
+    return FourierOperator(p.op .+ q.op)
 end
-function +(p::FourierDerivative, q::Number)
-    return FourierDerivative(p.op .+ q)
+function +(p::FourierOperator, q::Number)
+    return FourierOperator(p.op .+ q)
 end
-function -(p::FourierDerivative)
-    return FourierDerivative( -(p.op))
+function -(p::FourierOperator)
+    return FourierOperator( -(p.op))
 end
--(p::FourierDerivative, q::FourierDerivative) = p + (-q)
-+(q::Number, p::FourierDerivative) = +(p, q)
+-(p::FourierOperator, q::FourierOperator) = p + (-q)
++(q::Number, p::FourierOperator) = +(p, q)
 
-function inv(a::FourierDerivative)
+"""
+function inv(a::FourierOperator)
+
+# Description
+- Takes the inverse of a FourierOperator. If the inverse is zero,
+the it returns zero by defualt
+
+# Argument
+- `L`: A FourierOperator Object
+
+# Return
+- `L⁻¹`: A FourierOperator that represents the inverse of the original
+"""
+function inv(a::FourierOperator)
     inv_op = 1 ./ a.op 
     @inbounds for i in eachindex(inv_op)
         if abs(inv_op[i]) == Inf
@@ -46,7 +61,7 @@ function inv(a::FourierDerivative)
             inv_op[i] = 0.0
         end
     end
-    return FourierDerivative(inv_op)
+    return Operator(inv_op)
 end
 
 # Filters

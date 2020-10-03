@@ -3,10 +3,7 @@ export AbstractData, Data, evaluate, FourierMetaData
 abstract type AbstractData end
 struct Data{𝒯, 𝒟} <: AbstractData
     data::𝒯
-    metadata::𝒟
 end
-
-Data(data) = Data(data, nothing)
 
 function Base.show(io::IO, d::Data)
     printstyled(io, d.data, color = 199)

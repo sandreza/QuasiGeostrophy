@@ -1,5 +1,5 @@
 
-export AbstractField, AbstractMetaData
+export AbstractField, AbstractMetaData, BasicMetaData
 export Field
 
 abstract type AbstractField <: AbstractExpression end

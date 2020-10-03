@@ -21,7 +21,7 @@ mul!(f̂, P, f)
 ∫𝒢dxdy = inv(Δ)
 
 @testset "FourierTests" begin
-    tolerance = eps(1.0)*1e4
+    tolerance = eps(1.0) * 1e4
     bool = norm(∂ˣf - iP * ∂x(f̂)) ./ norm(∂ˣf ) < tolerance
     @test bool 
     bool = norm(∂ʸf - iP * ∂y(f̂)) ./ norm(∂ʸf ) < tolerance

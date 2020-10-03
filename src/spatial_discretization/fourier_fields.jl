@@ -16,20 +16,6 @@ function Base.show(io::IO, ϕ::FourierField{S,T}) where {S, T <: FourierMetaData
     printstyled(io, ϕ.metadata.name, color = 128 )
 end
 
-struct Transform{ℱ, ℬ}
-    forward::ℱ
-    backward::ℬ
-end
-
-function Transform(𝒢::FourierGrid)
-    grid_size = length.(fourier_grid.grid)
-    f = randn(grid_size...) .+ 0im
-    FFTW.set_num_threads(Threads.nthreads())
-    P = plan_fft(f) # typeof(iP) <: AbstractFFTs.ScaledPlan
-    iP = plan_ifft(f)
-    return Transform(P, iP)
-end
-
 function forward(ϕ::FourierField{S,T}) where {S, T <: FourierMetaData}
     ϕ̂ = ϕ.metadata.transform.forward * ϕ.data
     fmd = FourierMetaData(nothing, ϕ.metadata.grid, ϕ.metadata.transform)

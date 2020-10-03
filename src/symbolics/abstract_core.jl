@@ -17,7 +17,7 @@ include("abstract_equations.jl")
 # Hook to Symbolic Utils
 include("symbolic_utils_hooks.jl")
 # Define Operators
-inlude("abstract_operator.jl")
+include("abstract_operator.jl")
 
 # compute function
 compute(a::AbstractExpression) = throw(error("compute not defined for $(typeof(a))"))

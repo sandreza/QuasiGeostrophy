@@ -27,29 +27,6 @@ f3 = fourier_transform.forward * f3
 ϕ2 = FourierField(f2, fmd2)
 ϕ3 = FourierField(f3, fmd3)
 
-##
-@btime forward(ϕ);
-fwd = fourier_transform.forward
-dd = ϕ.data
-@btime fwd * dd;
-
-##
-# Define Closed Operations for FourierField
-
-for unary_operator in unary_operators
-    b_symbol = Meta.parse.(unary_operator[2]) #broadcast
-    @eval import Base: $b_symbol
-    @eval function $b_symbol(field1::FourierField)
-        data = broadcast($b_symbol, field1.data)
-        metadata  = field1.metadata
-        symbname = string($b_symbol)
-        name = symbname * "(" * field1.metadata.name * ")"
-        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
-        FourierField(data, fmd )
-    end
-end
-##
-
 ## Check Algebra
 norm((ϕ1 * ϕ2 - ϕ3).data)/norm((ϕ3).data)
 
@@ -62,24 +39,19 @@ evaluate(tt)
 
 ## Check Calculus
 kx, ky = fourier_grid.wavenumbers
-∂x = FourierDerivative(im .* kx)
-∂y = FourierDerivative(im .* ky)
-
-function (∇::FourierDerivative)(ϕ::FourierField)
-    return FourierField(∇.op .* ϕ.data, ϕ.metadata)
-end
-## Perhaps Define Operator Object
+∂x = FourierOperator(im .* kx)
+∂y = FourierOperator(im .* ky)
 
 ##
-dmd = DerivativeMetaData(FourierDerivative(im .* kx), "x")
+dmd = DerivativeMetaData(FourierOperator(im .* kx), "x")
 ∂x = Operator(nothing, dmd)
 ∂x(f_ϕ1)
-dmd = DerivativeMetaData(FourierDerivative(im .* ky), "y")
+dmd = DerivativeMetaData(FourierOperator(im .* ky), "y")
 ∂y = Operator(nothing, dmd)
-∂ʸϕ1 = 2 * ∂y(f_ϕ2)
+∂ʸϕ1 = ∂y(f_ϕ2) * ∂x(f_ϕ1)
 evaluate(∂ʸϕ1)
-
-plot(compute(∂ʸϕ1))
+tmp = compute(∂ʸϕ1)
+plot(tmp)
 
 
 a1 = compute(∂x)^2
@@ -89,8 +61,3 @@ norm(a1.op - a2.op)
 Δ1 = compute(∂x)^2 + compute(∂y)^2
 Δ2 = compute(∂x^2+∂y^2)
 norm(Δ1.op - Δ2.op)
-
-
-
-
-

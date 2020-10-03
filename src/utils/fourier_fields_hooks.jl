@@ -1,3 +1,17 @@
+
+for unary_operator in unary_operators
+    b_symbol = Meta.parse.(unary_operator[2]) #broadcast
+    @eval import Base: $b_symbol
+    @eval function $b_symbol(field1::FourierField)
+        data = broadcast($b_symbol, field1.data)
+        metadata  = field1.metadata
+        symbname = string($b_symbol)
+        name = symbname * "(" * field1.metadata.name * ")"
+        fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+        FourierField(data, fmd )
+    end
+end
+
 for binary_operator in [binary_operators..., ["Negative", "-"]]
     b_symbol = Meta.parse.(binary_operator[2]) #broadcast
     @eval import Base: $b_symbol
@@ -32,7 +46,8 @@ for binary_operator in [binary_operators..., ["Negative", "-"]]
         return FourierField(data, fmd)
     end
 end
-# overwrite multiplication
+# overwrite multiplication. This is where the method definition error comes 
+# WARNING: Method definition *(QuasiGeostrophy.FourierField{D, S}
 function *(f̂::FourierField, ĝ::FourierField)
     fwd = f̂.metadata.transform.forward
     bwd = f̂.metadata.transform.backward
@@ -46,3 +61,5 @@ function *(f̂::FourierField, ĝ::FourierField)
     fmd = FourierMetaData(name, metadata.grid, metadata.transform)
     return FourierField(fwd * fg, fmd)
 end
+
+compute(a::FourierField) = a

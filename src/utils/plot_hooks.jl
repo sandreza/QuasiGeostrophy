@@ -1,3 +1,5 @@
+using Plots
+import Plots: plot
 function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
     dims = length(ϕ.metadata.grid.grid)
     if dims == 1

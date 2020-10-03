@@ -1,4 +1,4 @@
-export Operator
+export Operator, DerivativeMetaData
 
 struct Operator{𝒮, 𝒯} <: AbstractExpression
     operand::𝒮
@@ -23,11 +23,6 @@ struct DerivativeMetaData{𝒪, 𝒟}
     direction::𝒟
 end
 
-function compute(a::DerivativeMetaData{𝒮,𝒯}) where
-    {𝒮 <: FourierDerivative, 𝒯}
-    return a.operation
-end 
-
 function Base.show(io::IO, o::Operator{S,T}) where
     {S <: Nothing, T <: DerivativeMetaData}
     name = Char(0x02202) * o.metadata.direction
@@ -41,3 +36,9 @@ function Base.show(io::IO, o::Operator{S,T}) where
     print(o.operand)
     printstyled(io, ")",  color = 14 )
 end
+
+## need the following hook
+function compute(a::DerivativeMetaData{𝒮,𝒯}) where
+    {𝒮 <: FourierOperator, 𝒯}
+    return a.operation
+end 

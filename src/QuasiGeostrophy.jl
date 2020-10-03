@@ -27,6 +27,10 @@ include("symbolics/abstract_core.jl")
 # Grid Includes
 include("grid/grid_core.jl")
 
+# Include Hooks
+include("utils/fourier_fields_hooks.jl")
+include("utils/plot_hooks.jl")
+
 # Most Important functions
 function print_colors()
     for i in 0:255

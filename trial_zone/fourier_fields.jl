@@ -1,4 +1,5 @@
 using QuasiGeostrophy, Plots, FFTW, BenchmarkTools
+using LinearAlgebra
 import Plots: plot
 import QuasiGeostrophy: compute
 import Base: * 
@@ -44,13 +45,16 @@ end
 function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
     dims = length(ϕ.metadata.grid.grid)
     if dims == 1
-        plot(ϕ.metadata.grid.grid[1], ϕ.data)
+        x = ϕ.metadata.grid.grid[1][:]
+        dd = ϕ.metadata.transform.backward * ϕ.data
+        contourf(x, real.(dd))
         plot!(xlabel = "x")
         plot!(ylabel = ϕ.metadata.name)
     elseif dims == 2
         x = ϕ.metadata.grid.grid[1][:]
         y = ϕ.metadata.grid.grid[2][:]
-        contourf(x, y, ϕ.data')
+        dd = ϕ.metadata.transform.backward * ϕ.data
+        contourf(x, y, real.(dd)')
         contourf!(xlabel = "x")
         contourf!(ylabel = "y")
     else
@@ -106,11 +110,11 @@ end
 
 function *(f̂::FourierField, ĝ::FourierField)
     fwd = f̂.metadata.transform.forward
-    bwd = f̂.metadata.transform.forward
+    bwd = f̂.metadata.transform.backward
     f = bwd * f̂.data
     g = bwd * ĝ.data
     fg = broadcast(*, f, g)
     return FourierField(fwd * fg, f̂.metadata)
 end
 ##
-ϕ1 * ϕ2 - ϕ3
+norm((ϕ1 * ϕ2 - ϕ3).data)/norm((ϕ3).data)

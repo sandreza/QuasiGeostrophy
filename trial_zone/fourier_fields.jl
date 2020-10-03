@@ -75,7 +75,6 @@ plot(ϕ::Field{S, T}) where {S <: FourierField, T} = plot(ϕ.data)
 Nx = 2^8; Ny = 2^8;
 fourier_grid = create_grid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid
-kx, ky = fourier_grid.wavenumbers
 fourier_transform = Transform(fourier_grid)
 
 fmd  = FourierMetaData("ϕ ", fourier_grid, fourier_transform)
@@ -88,7 +87,7 @@ f3 = @. sin(x) * sin(y)
 f1 = fourier_transform.forward * f1
 f2 = fourier_transform.forward * f2
 f3 = fourier_transform.forward * f3
-ϕ = FourierField(f1, fmd)
+ϕ  = FourierField(f1, fmd)
 ϕ1 = FourierField(f1, fmd1)
 ϕ2 = FourierField(f2, fmd2)
 ϕ3 = FourierField(f3, fmd3)
@@ -175,12 +174,73 @@ compute(tt)
 evaluate(tt)
 
 ## Check Calculus
+kx, ky = fourier_grid.wavenumbers
+∂x = FourierDerivative(im .* kx)
+∂y = FourierDerivative(im .* ky)
 
+function (∇::FourierDerivative)(ϕ::FourierField)
+    return FourierField(∇.op .* ϕ.data, ϕ.metadata)
+end
 ## Perhaps Define Operator Object
-function (p::FourierDerivative)(ϕ::FourierField) 
-    return ϕ(*(p, ϕ.data), ϕ.metadata)
+
+struct Operator{𝒮, 𝒯} <: AbstractExpression
+    operand::𝒮
+    metadata::𝒯
+end
+struct DerivativeMetaData{𝒪, 𝒟}
+    operation::𝒪
+    direction::𝒟
 end
 
-function Base.show(io::IO, ϕ::Gradient{S,T}) where {S, T <: FourierMetaData}
-    printstyled(io, ϕ.metadata.name, color = 128 )
+function (o::Operator)(expr::AbstractExpression)
+    return Operator(expr, o.metadata)
 end
+
+function compute(o::Operator)
+    return o.metadata.operation(compute(o.operand))
+end
+
+function compute(o::Operator{𝒮, 𝒯}) where 
+    {𝒮 <: Nothing, 𝒯}
+    return compute(o.metadata)
+end
+
+function compute(a::DerivativeMetaData{𝒮,𝒯}) where
+    {𝒮 <: FourierDerivative, 𝒯}
+    return a.operation
+end 
+
+
+function Base.show(io::IO, o::Operator{S,T}) where
+    {S <: Nothing, T <: DerivativeMetaData}
+    name = Char(0x02202) * o.metadata.direction
+    printstyled(io, name, color = 14 )
+end
+
+function Base.show(io::IO, o::Operator{S,T}) where 
+    {S <: AbstractExpression, T <: DerivativeMetaData}
+    name = Char(0x02202) * o.metadata.direction
+    printstyled(io, name, "(",  color = 14 )
+    print(o.operand)
+    printstyled(io, ")",  color = 14 )
+end
+##
+dmd = DerivativeMetaData(FourierDerivative(im .* kx), "x")
+∂x = Operator(nothing, dmd)
+∂x(f_ϕ1)
+dmd = DerivativeMetaData(FourierDerivative(im .* ky), "y")
+∂y = Operator(nothing, dmd)
+∂ʸϕ1 = 2 * ∂y(f_ϕ2)
+evaluate(∂ʸϕ1)
+
+plot(compute(∂ʸϕ1))
+
+
+a1 = compute(∂x)^2
+a2 = compute(∂x^2)
+norm(a1.op - a2.op)
+
+
+
+
+

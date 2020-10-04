@@ -36,9 +36,3 @@ function Base.show(io::IO, o::Operator{S,T}) where
     print(o.operand)
     printstyled(io, ")",  color = 14 )
 end
-
-## need the following hook
-function compute(a::DerivativeMetaData{𝒮,𝒯}) where
-    {𝒮 <: FourierOperator, 𝒯}
-    return a.operation
-end 

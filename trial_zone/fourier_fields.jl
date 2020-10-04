@@ -5,17 +5,16 @@ import QuasiGeostrophy: compute
 
 
 ##
-
 Ωxy = Torus(0,2π) × Torus(0,2π)
 Nx = 2^8; Ny = 2^8;
 fourier_grid = create_grid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid
 fourier_transform = Transform(fourier_grid)
 
-fmd  = FourierMetaData("ϕ" , fourier_grid, fourier_transform)
-fmd1 = FourierMetaData("ϕ1", fourier_grid, fourier_transform)
-fmd2 = FourierMetaData("ϕ2", fourier_grid, fourier_transform)
-fmd3 = FourierMetaData("ϕ3", fourier_grid, fourier_transform)
+names = ("ϕ1", "ϕ2", "ϕ3", "ϕ4")
+create_fields(names = names, 
+              grid = fourier_grid,
+              transform = fourier_transform)
 f1 = @. sin(x) + 0im * y
 f2 = @. sin(y) + 0im * x
 f3 = @. sin(x) * sin(y) # product
@@ -24,12 +23,10 @@ f1 = fourier_transform.forward * f1
 f2 = fourier_transform.forward * f2
 f3 = fourier_transform.forward * f3
 f4 = fourier_transform.forward * f4
-ϕ  = FourierField(f1, fmd)
-ϕ1 = FourierField(f1, fmd1)
-ϕ2 = FourierField(f2, fmd2)
-ϕ3 = FourierField(f3, fmd3)
-ϕ4 = FourierField(f3, fmd4)
-
+ϕ1.data .= f1
+ϕ2.data .= f2
+ϕ3.data .= f3
+ϕ4.data .= f4
 ## Check Algebra
 norm((ϕ1 * ϕ2 - ϕ3).data)/norm((ϕ3).data)
 

@@ -72,3 +72,63 @@ end
 ∂y = DirectionalDerivative("y")
 ∂z = DirectionalDerivative("z")
 ∂t = DirectionalDerivative("t")
+
+## Probably should move to main directory
+size(f::FourierGrid) = length.(f.grid)
+
+"""
+function create_fields(; names = (), 
+                         grid = nothing, 
+                         transform = nothing,
+                         arraytype = Array,
+                         floattype = ComplexF64)
+# Description
+Automates the constructions of fourier fields with names
+
+# Arguments
+All the arguments are keyword arguments
+
+# Keyword Arguments
+- `names`: tuple of strings
+- `grid`: FourierGrid object
+- `transfrom`: Transform object
+- `arraytype`: default = Array, 
+- `floattype`: default = ComplexF64
+
+# Return
+nothing
+"""
+function create_fields(; names = (), 
+                         grid = nothing, 
+                         transform = nothing,
+                         arraytype = Array,
+                         floattype = ComplexF64)
+    printstyled("Warning!!! ", color = :red)
+    print("the name(s) ")
+    printstyled("(", color = :blue)
+    for name in names 
+        printstyled(name, ", ", color = :blue)
+    end
+    printstyled(")", color = :blue)
+    print(" are being overwritten in the ")
+    print("global scope.")
+    println(" ")
+    dimensions = size(grid)
+    for name in names
+        local fmd = FourierMetaData(name, grid, transform)
+        local field_data = arraytype(zeros(floattype, dimensions...))
+        local parsed_name = Meta.parse(string(name))
+        @eval $parsed_name = FourierField($field_data, $fmd)
+    end
+    return nothing
+end
+
+# convenience function to initialize array
+function (ϕ::FourierField)(a::AbstractArray)
+    f1 = ϕ.metadata.transform.forward * (a .+ 0im)
+    ϕ.data .= f1
+    return nothing
+end
+
+import LinearAlgebra: norm
+norm(ϕ::FourierField) = norm(ϕ.data)

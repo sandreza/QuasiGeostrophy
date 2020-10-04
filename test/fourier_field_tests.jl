@@ -7,15 +7,10 @@ const tol = 1e1
 Ω = Torus(0,2π) 
 Nx = 2^4; 
 fourier_grid = create_grid(Nx, Ω)
+fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5")
+create_fields(names = fieldnames, grid = fourier_grid)
+# initialize fields with nontrivial data
 x = fourier_grid.grid[1]
-fourier_transform = Transform(fourier_grid)
-
-names = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5")
-
-create_fields(names = names, 
-              grid = fourier_grid,
-              transform = fourier_transform)
-
 ϕ1(sin.(x)); ϕ2(cos.(x));
 ϕ3( @. sin(x) * cos(x) );
 ϕ4( @. sin(x) + cos(x) );

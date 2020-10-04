@@ -100,9 +100,9 @@ nothing
 """
 function create_fields(; names = (), 
                          grid = nothing, 
-                         transform = nothing,
                          arraytype = Array,
                          floattype = ComplexF64)
+    transform = Transform(grid)
     printstyled("Warning!!! ", color = :red)
     print("the name(s) ")
     printstyled("(", color = :blue)

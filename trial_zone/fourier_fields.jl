@@ -12,7 +12,7 @@ fourier_grid = create_grid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid
 fourier_transform = Transform(fourier_grid)
 
-fmd  = FourierMetaData("ϕ ", fourier_grid, fourier_transform)
+fmd  = FourierMetaData("ϕ" , fourier_grid, fourier_transform)
 fmd1 = FourierMetaData("ϕ1", fourier_grid, fourier_transform)
 fmd2 = FourierMetaData("ϕ2", fourier_grid, fourier_transform)
 fmd3 = FourierMetaData("ϕ3", fourier_grid, fourier_transform)
@@ -39,19 +39,22 @@ evaluate(tt)
 
 ## Check Calculus
 kx, ky = fourier_grid.wavenumbers
-∂x = FourierOperator(im .* kx)
-∂y = FourierOperator(im .* ky)
+∂x = FourierOperator(im .* kx, FourierOperatorMetaData("∂x"))
+∂y = FourierOperator(im .* ky, FourierOperatorMetaData("∂y"))
 
+∂x(ϕ)
+
+∂x(ϕ) + 1 + (∂x^2 + ∂y^2)(ϕ)
 ##
-dmd = DerivativeMetaData(FourierOperator(im .* kx), "x")
+dmd = DerivativeMetaData(FourierOperator(im .* kx, FourierOperatorMetaData("∂x")), "x")
 ∂x = Operator(nothing, dmd)
 ∂x(f_ϕ1)
-dmd = DerivativeMetaData(FourierOperator(im .* ky), "y")
+dmd = DerivativeMetaData(FourierOperator(im .* ky, FourierOperatorMetaData("∂y")), "y")
 ∂y = Operator(nothing, dmd)
 ∂ʸϕ1 = ∂y(f_ϕ2) * ∂x(f_ϕ1)
 evaluate(∂ʸϕ1)
 tmp = compute(∂ʸϕ1)
-plot(tmp)
+p1 = plot(tmp)
 
 
 a1 = compute(∂x)^2

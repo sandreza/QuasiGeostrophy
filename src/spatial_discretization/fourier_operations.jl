@@ -1,4 +1,4 @@
-export FourierOperator
+export FourierOperator, FourierOperatorMetaData
 export filter_convolve, convolve, box_filter
 
 import Base: *, ^, +, inv, - 
@@ -7,6 +7,11 @@ struct FourierOperator{T, S}
     op::T
     metadata::S
 end
+
+struct FourierOperatorMetaData{S}
+    name::S
+end
+
 FourierOperator(a) = FourierOperator(a, nothing)
 
 function *(∂x::FourierOperator, ϕ::AbstractArray)
@@ -17,8 +22,9 @@ function (p::FourierOperator)(ϕ::AbstractArray)
     return *(p, ϕ)
 end
 
+## Operator Algebra
 function ^(p::FourierOperator, α::Number)
-    return FourierOperator(p.op.^(α))
+    return FourierOperator(p.op .^(α))
 end
 
 function *(p::FourierOperator, α::Number)
@@ -30,14 +36,53 @@ end
 function +(p::FourierOperator, q::FourierOperator)
     return FourierOperator(p.op .+ q.op)
 end
+
 function +(p::FourierOperator, q::Number)
     return FourierOperator(p.op .+ q)
 end
+
 function -(p::FourierOperator)
     return FourierOperator( -(p.op))
 end
+
 -(p::FourierOperator, q::FourierOperator) = p + (-q)
 +(q::Number, p::FourierOperator) = +(p, q)
+
+## with names
+function ^(p::FourierOperator{𝒮, 𝒯}, α::Number) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = p.metadata.name * "^" * string(α)
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator(p.op .^(α), fomd)
+end
+
+function *(p::FourierOperator{𝒮, 𝒯}, α::Number) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = string(α) * "*" * p.metadata.name
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator(p.op .* α, fomd)
+end
+
+function +(p::FourierOperator{𝒮, 𝒯}, q::FourierOperator{𝒮, 𝒯}) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = "(" * p.metadata.name * "+" * q.metadata.name * ")"
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator(p.op .+ q.op, fomd)
+end
+
+function +(p::FourierOperator{𝒮, 𝒯}, q::Number) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = "(" * p.metadata.name * "+" * string(q) * ")"
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator(p.op .+ q, fomd)
+end
+
+function -(p::FourierOperator{𝒮, 𝒯}) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = "-(" * p.metadata.name * ")"
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator( -(p.op), fomd)
+end
 
 """
 function inv(a::FourierOperator)
@@ -62,6 +107,21 @@ function inv(a::FourierOperator)
         end
     end
     return FourierOperator(inv_op)
+end
+
+function inv(a::FourierOperator{𝒮, 𝒯}) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = a.metadata.name * "⁻¹"
+    fomd = FourierOperatorMetaData(name)
+    inv_op = 1 ./ a.op 
+    @inbounds for i in eachindex(inv_op)
+        if abs(inv_op[i]) == Inf
+            inv_op[i] = 0.0
+        elseif isnan(norm(inv_op[i]))
+            inv_op[i] = 0.0
+        end
+    end
+    return FourierOperator(inv_op, fomd)
 end
 
 # Filters
@@ -97,4 +157,10 @@ function convolve!(u, v, w, ŵ, û, v̂, P, iP)
     end
     mul!(ŵ, P, w)
     return nothing
+end
+
+## 
+function Base.show(io::IO, O::FourierOperator{𝒮, 𝒯}) where 
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    printstyled(io, O.metadata.name, color = 159)
 end

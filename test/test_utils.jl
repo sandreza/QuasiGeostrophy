@@ -145,3 +145,22 @@ function spectrum(ϕ::FourierField)
     scatter!(ylims = (ymin, ymax))
     return p1
 end
+
+function create_operators(g::FourierGrid;
+                          names = ("x","y","z"),
+                          arraytype = Array)
+    printstyled("Warning !!!", color = :red)
+    for i in 1:length(g.grid)
+        operator_name = Char(0x02202) * names[i]
+        print(" introducing ")
+        printstyled(operator_name, color = :blue)
+        println(" into the global scope")
+        k = fourier_grid.wavenumbers[i]
+        parsed_name = Meta.parse(operator_name)
+        op = arraytype(im .* k)
+        fmd = FourierOperatorMetaData(operator_name)
+        @eval $parsed_name = FourierOperator($op, $fmd)
+    end
+    println(" ")
+    return nothing
+end

@@ -132,3 +132,16 @@ end
 
 import LinearAlgebra: norm
 norm(ϕ::FourierField) = norm(ϕ.data)
+
+function spectrum(ϕ::FourierField)
+    f = ϕ.data
+    g = log10.(abs.(f))[1:div(length(f),2)+1]
+    ymax = maximum(g) * 1.1
+    ymin = 1e-16 * ymax
+    wvi = collect(1:div(length(f),2)+1) .- 1
+    p1 = scatter(wvi, g, label = ϕ.metadata.name)
+    scatter!(xlabel = "wavenumber index")
+    scatter!(ylabel = "log10(spectral amplitude)")
+    scatter!(ylims = (ymin, ymax))
+    return p1
+end

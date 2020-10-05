@@ -5,7 +5,7 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
     if dims == 1
         x = ϕ.metadata.grid.grid[1][:]
         dd = ϕ.metadata.transform.backward * ϕ.data
-        contourf(x, real.(dd))
+        plot(x, real.(dd))
         plot!(xlabel = "x")
         plot!(ylabel = ϕ.metadata.name)
     elseif dims == 2

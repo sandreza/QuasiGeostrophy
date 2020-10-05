@@ -63,3 +63,9 @@ function *(f̂::FourierField, ĝ::FourierField)
 end
 
 compute(a::FourierField) = a
+
+## need the following hook
+function compute(a::DerivativeMetaData{𝒮,𝒯}) where
+    {𝒮 <: FourierOperator, 𝒯}
+    return a.operation
+end 

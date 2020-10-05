@@ -1,9 +1,6 @@
 # Quick Structs for checking calculations
 using QuasiGeostrophy
-import QuasiGeostrophy:compute
-
-export Wrapper, @wrapper
-export DirectionalDerivative, GradientMetaData
+import QuasiGeostrophy: compute
 
 struct Wrapper{T, S} <: AbstractExpression
     data::T
@@ -150,11 +147,12 @@ function create_operators(g::FourierGrid;
                           names = ("x","y","z"),
                           arraytype = Array)
     printstyled("Warning !!!", color = :red)
+    println("")
     for i in 1:length(g.grid)
         operator_name = Char(0x02202) * names[i]
-        print(" introducing ")
+        print("Introducing ")
         printstyled(operator_name, color = :blue)
-        println(" into the global scope")
+        println(" into the global scope.")
         k = fourier_grid.wavenumbers[i]
         parsed_name = Meta.parse(operator_name)
         op = arraytype(im .* k)

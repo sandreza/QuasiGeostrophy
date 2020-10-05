@@ -14,7 +14,7 @@ scale = 100
 const Δt = 0.01 / scale * 2π
 t = randn(1) .* 0
 for i in 1:100*scale
-    local nϕ = ϕ1 + Δt * ( ∂x(ϕ1) )
+    nϕ = ϕ1 + Δt * ( ∂x(ϕ1) )
     ϕ1.data .= nϕ.data
     if i%scale == 0
     display(plot(ϕ1))

@@ -15,8 +15,8 @@ FFTW.set_num_threads(Threads.nthreads())
 P = plan_fft(f) # typeof(iP) <: AbstractFFTs.ScaledPlan
 iP = plan_ifft(f)
 mul!(f̂, P, f)
-∂x = FourierDerivative(im .* kx)
-∂y = FourierDerivative(im .* ky)
+∂x = FourierOperator(im .* kx)
+∂y = FourierOperator(im .* ky)
 Δ = ∂x^2 + ∂y^2
 ∫𝒢dxdy = inv(Δ)
 

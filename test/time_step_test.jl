@@ -3,7 +3,7 @@ include(pwd() * "/test/test_utils.jl")
 Ω = Torus(0,2π) 
 Nx = 2^3; 
 plot_flag = false
-plot_flag2 = true
+plot_flag2 = false
 fourier_grid = create_grid(Nx, Ω)
 fieldnames = ("ϕ_numerical", "ϕ_exact")
 create_fields(names = fieldnames, grid = fourier_grid)

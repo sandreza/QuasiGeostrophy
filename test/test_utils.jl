@@ -134,7 +134,7 @@ function spectrum(ϕ::FourierField)
     f = ϕ.data
     g = log10.(abs.(f))[1:div(length(f),2)+1]
     ymax = maximum(g) * 1.1
-    ymin = 1e-16 * ymax
+    ymin = ymax - 16
     wvi = collect(1:div(length(f),2)+1) .- 1
     p1 = scatter(wvi, g, label = ϕ.metadata.name)
     scatter!(xlabel = "wavenumber index")

@@ -37,7 +37,7 @@ end
 Nx = 2^4; Ny = 2^4;
 fourier_grid = create_grid((Nx, Ny), Ω)
 
-fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5")
+fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5", "ϕ6")
 create_fields(names = fieldnames, grid = fourier_grid)
 
 x, y = fourier_grid.grid
@@ -46,8 +46,7 @@ x, y = fourier_grid.grid
 ϕ3(sin.(x) .* sin.(y))
 ϕ4(sin.(x) .+ sin.(y))
 ϕ5(cos.(x) .* sin.(y))
-
-ϕ4 = FourierField(f4, fmd4)
+ϕ6(sin.(x) .* cos.(y))
 
 @testset "2D Field Algebra Test" begin
     @test norm(ϕ1 * ϕ2 - ϕ3)/norm(ϕ3) < eps(tol)
@@ -62,5 +61,6 @@ create_operators(fourier_grid)
     @test norm(∂y(ϕ1)) < eps(tol)
     println("checking ∂x(ϕ3) - ϕ5 ")
     @test norm( ∂x(ϕ3) - ϕ5 )/norm(ϕ5) < eps(tol)
+    println("checking ∂y(ϕ3) - ϕ6 ")
+    @test norm( ∂y(ϕ3) - ϕ6 )/norm(ϕ6) < eps(tol)
 end
-

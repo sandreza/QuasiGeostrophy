@@ -1,4 +1,4 @@
-using Plots, QuasiGeostrophy
+using Plots, QuasiGeostrophy, Test
 include(pwd() * "/test/test_utils.jl")
 Ω = Torus(0,2π) 
 Nx = 2^3; 
@@ -59,8 +59,8 @@ for scale in [1, 10^1, 10^2, 10^3, 10^4]
     push!(error_list_2, error)
 end
 #
-prefactor = error_list ./ Δt_list 
-prefactor2 = error_list_2 ./ Δt_list_2 .^2
+prefactor = error_list ./ Δt_list # first order convergence
+prefactor2 = error_list_2 ./ Δt_list_2 .^2 # second order convergence
 if plot_flag2
     xc = collect(0:0.1:4.5)
     plot(xc, -1 .* xc .+ log10(prefactor[end]), label = "1st order theoretical", xlims = (0, 4.5), linestyle = :dash, linewidth = 2, color = :orange)

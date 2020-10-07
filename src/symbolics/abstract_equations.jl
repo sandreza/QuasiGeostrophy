@@ -22,12 +22,13 @@ macro to_equation(expr)
 end
 
 macro pde_system(expr)
+    @assert :(=) == expr.head
     for i in eachindex(expr.args[2].args)
         arg = expr.args[2].args[i]
         tmp = Expr(:call, :Equation, esc(arg.args[1]), esc(arg.args[2]))
         expr.args[2].args[i] = tmp
     end
-    expr.args[1]= esc(expr.args[1])
+    expr.args[1] = esc(expr.args[1])
     return expr
 end
 

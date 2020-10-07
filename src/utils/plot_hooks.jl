@@ -1,5 +1,7 @@
 using Plots
 import Plots: plot
+export plot, spectrum
+
 function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
     dims = length(ϕ.metadata.grid.grid)
     if dims == 1
@@ -23,4 +25,21 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
     end
 end
 
-plot(ϕ::Field{S, T}) where {S <: FourierField, T} = plot(ϕ.data)
+plot(ϕ::Field{S, T}; kwargs...) where {S <: FourierField, T} = plot(ϕ.data, kwargs)
+
+function spectrum(ϕ::FourierField)
+    dims = length(ϕ.metadata.grid.grid)
+    if dims == 1
+        f = ϕ.data
+        g = log10.(abs.(f))[1:div(length(f),2)+1]
+        ymax = maximum(g) * 1.1
+        ymin = maximum(g)  - 16
+        wvi = collect(1:div(length(f),2)+1) .- 1
+        p1 = scatter(wvi, g, label = ϕ.metadata.name)
+        scatter!(xlabel = "wavenumber index")
+        scatter!(ylabel = "log10(spectral amplitude)")
+        scatter!(ylims = (ymin, ymax))
+        return p1
+    end
+    return nothing
+end

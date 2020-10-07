@@ -3,7 +3,7 @@ using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 # boiler plate definitions
 Ωxy = Torus(0,2π) × Torus(0,2π)
 Nx = 2^6; Ny = 2^6;
-fourier_grid = create_grid((Nx, Ny), Ωxy)
+fourier_grid = FourierGrid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid
 kx, ky = fourier_grid.wavenumbers
 u = @. 1 * sin(x) * sin(y) + 0im

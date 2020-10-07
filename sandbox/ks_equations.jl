@@ -5,7 +5,7 @@ a = 0; b = 22.0
 const Δt = 1e-1 / 2
 Ω = Torus(a,b) # Domain
 Nx = 2^6;
-fourier_grid = create_grid(Nx, Ω) # Grid
+fourier_grid = FourierGrid(Nx, Ω) # Grid
 x = fourier_grid.grid[1]
 kx = fourier_grid.wavenumbers[1]
 f = @. sin( 4 * 2π * x / (b-a)) + 0im

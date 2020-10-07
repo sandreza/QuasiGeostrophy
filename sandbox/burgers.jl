@@ -3,7 +3,7 @@ using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 a = 0; b = 2π
 Ω = Torus(a,b) # Domain
 Nx = 2^7;
-fourier_grid = create_grid(Nx, Ω) # Grid
+fourier_grid = FourierGrid(Nx, Ω) # Grid
 x = fourier_grid.grid[1]
 kx = fourier_grid.wavenumbers[1]
 f = @. exp(-2 * (b-a) / 3 * (x - (b-a)/2)^2)*(1+0im)

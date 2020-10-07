@@ -6,7 +6,6 @@ QuasiGeostrophy
 - A series of functions for testing
 """
 module QuasiGeostrophy
-
 # Using
 using LinearAlgebra
 # Spatial Discretization Includes
@@ -30,6 +29,7 @@ include("grid/grid_core.jl")
 # Include Hooks
 include("utils/fourier_fields_hooks.jl")
 include("utils/plot_hooks.jl")
+include("utils/convenience_functions.jl")
 
 # Most Important functions
 function print_colors()

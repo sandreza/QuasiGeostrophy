@@ -1,6 +1,6 @@
 export FourierField, FourierMetaData, Transform
-export plot, forward, backward
-
+export plot, forward, backward, norm
+import LinearAlgebra: norm
 struct FourierField{D,S}
     data::D
     metadata::S
@@ -27,3 +27,12 @@ function backward(ϕ::FourierField{S,T}) where{S, T <: FourierMetaData}
     fmd = FourierMetaData(nothing, ϕ.metadata.grid, ϕ.metadata.transform)
     return FourierField(ϕ̂, fmd)
 end
+
+# convenience function to initialize array
+function (ϕ::FourierField)(a::AbstractArray)
+    f1 = ϕ.metadata.transform.forward * (a .+ 0im)
+    ϕ.data .= f1
+    return nothing
+end
+
+norm(ϕ::FourierField) = norm(ϕ.data)

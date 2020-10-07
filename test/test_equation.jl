@@ -6,7 +6,7 @@ include(pwd() * "/test/test_utils.jl")
 equ = @to_equation σ=u
 @pde_system pde_system = [
     σ = ∂x(u),
-    ∂t(u)= -∂x(u * u - ∂x(σ)),
+    ∂t(u) = -∂x(u * u - ∂x(σ)),
 ]
 
 @testset "Basic Equation Test" begin

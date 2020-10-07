@@ -4,7 +4,7 @@ using LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 # boiler plate definitions
 Ωxy = Torus(0,2π) × Torus(0,2π)
 Nx = 2^5; Ny = 2^5;
-fourier_grid = create_grid((Nx, Ny), Ωxy)
+fourier_grid = FourierGrid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid
 kx, ky = fourier_grid.wavenumbers
 ψ1 = @. 0 * sin(x) - sin(y) + 0im

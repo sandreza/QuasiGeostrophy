@@ -1,15 +1,14 @@
 using Plots, QuasiGeostrophy, Test
-include(pwd() * "/test/test_utils.jl")
 # 1D Tests
 Ω = Torus(0,2π) 
 Nx = 2^8; 
-fourier_grid = create_grid(Nx, Ω)
+grid = FourierGrid(Nx, Ω)
 fieldnames = ("ϕ", "ϕ2")
-create_fields(names = fieldnames, grid = fourier_grid)
-create_operators(fourier_grid)
-# initialize fields with nontrivial data
+create_fields(@__MODULE__, names = fieldnames, grid = grid)
+create_operators(@__MODULE__, grid)
+#  initialize fields with nontrivial data
 #  Heuns Method
-x = fourier_grid.grid[1]
+x = grid.grid[1]
 
 scale = round(Int, 1/(x[2]-x[1]))
 ν = 10000
@@ -39,13 +38,13 @@ norm(ϕ-ϕ2)/norm(ϕ2)
 
 Ω = Torus(0,2π) × Torus(0,2π)
 Nx = Ny =  2^6; 
-fourier_grid = create_grid((Nx, Ny), Ω)
+grid = FourierGrid((Nx, Ny), Ω)
 fieldnames = ("ϕ", "ϕ2", "u", "v", "ψ")
-create_fields(names = fieldnames, grid = fourier_grid)
-create_operators(fourier_grid)
+create_fields(@__MODULE__, names = fieldnames, grid = fourier_grid)
+create_operators(@__MODULE__, grid)
 # initialize fields with nontrivial data
 #  Heuns Method
-x, y = fourier_grid.grid
+x, y = grid.grid
 
 scale = round(Int, 1/(x[2]-x[1]))
 ν = 10000
@@ -65,7 +64,7 @@ v = - ∂x(ψ)
 norm(∂x(u) + ∂y(v))
 for i in 1:100*scale
     Δ = (∂x^2 + ∂y^2)^1
-    f =  ∂x( u * ϕ) + ∂y( v *  ϕ) + κ * Δ(ϕ)
+    f = u * ∂x(ϕ) + v * ∂y(ϕ) + κ * Δ(ϕ)
     nϕ = ϕ + Δt * f
     nϕ = ϕ + Δt/2 * ( f +  u * ∂x(nϕ) + v * ∂y(nϕ)  + κ * Δ(nϕ))
     ϕ.data .= nϕ.data
@@ -77,7 +76,7 @@ for i in 1:100*scale
 end
 for i in 1:100*scale
     Δ = (∂x^2 + ∂y^2)^1
-    f =  ∂x( -u * ϕ) + ∂y( -v *  ϕ) + κ * Δ(ϕ)
+    f =  -u * ∂x(ϕ) + -v * ∂y(  ϕ) + κ * Δ(ϕ)
     nϕ = ϕ + Δt * f
     nϕ = ϕ + Δt/2 * ( f +  -u * ∂x(nϕ) + -v * ∂y(nϕ)  + κ * Δ(nϕ))
     ϕ.data .= nϕ.data

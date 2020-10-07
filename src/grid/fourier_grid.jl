@@ -1,5 +1,5 @@
 export FourierGrid
-export create_grid, getindex
+export create_grid, getindex, size
 
 struct FourierGrid{𝒢, 𝒲, 𝒟} <: AbstractGrid
     grid::𝒢
@@ -10,7 +10,7 @@ end
 import Base: getindex
 getindex(f::FourierGrid, i) = f.grid[i]
 
-function create_grid(grid_points, Ω::IntervalDomain) # perhaps change to match the product domain
+function FourierGrid(grid_points, Ω::IntervalDomain) # perhaps change to match the product domain
     @assert length(grid_points) == 1
     @assert Ω.periodic
     grid = fourier_nodes(grid_points, a = Ω.a, b = Ω.b)
@@ -19,7 +19,7 @@ function create_grid(grid_points, Ω::IntervalDomain) # perhaps change to match 
 end
 
 """
-create_grid(grid_points, Ω::ProductDomain)
+FourierGrid(grid_points, Ω::ProductDomain)
 # Description
 Create a numerical grid with grid_points resolution in the domain Ω \n 
 Only works for fully periodic grids at the moment
@@ -29,7 +29,7 @@ Only works for fully periodic grids at the moment
 # Return
 A Fourier Grid object
 """
-function create_grid(grid_points, Ω::ProductDomain) # change to be fully general later
+function FourierGrid(grid_points, Ω::ProductDomain) # change to be fully general later
     @assert length(grid_points) == length(Ω.domains)
     grid = []
     wavenumbers = []
@@ -57,3 +57,5 @@ function Base.show(io::IO, F::FourierGrid)
         print(length(F.grid))
     end
  end
+
+ size(f::FourierGrid) = length.(f.grid)

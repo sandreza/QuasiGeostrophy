@@ -2,7 +2,7 @@ using QuasiGeostrophy
 using LinearAlgebra, FFTW, BenchmarkTools, Plots
 
 a = 0; b = 22.0
-const Δt = 1e-1 / 2
+Δt = 1e-1 / 2
 Ω = Torus(a,b) # Domain
 Nx = 2^6;
 fourier_grid = FourierGrid(Nx, Ω) # Grid

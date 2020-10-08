@@ -34,7 +34,11 @@ function create_fields(; names = (),
         field_data = arraytype(zeros(floattype, dimensions...))
         push!(state, FourierField(field_data, fmd))
     end
-    return state
+    if length(state) == 1
+        return state[1]
+    else
+        return state
+    end
 end
 
 
@@ -66,7 +70,11 @@ function create_operators(g::FourierGrid;
         fmd = FourierOperatorMetaData(operator_name)
         push!(ops, FourierOperator(op, fmd))
     end
-    return ops
+    if length(ops) == 1
+        return ops[1]
+    else
+        return ops
+    end
 end
 
 ## DO NOT USE THESE FUNCTIONS NORMALLY !!!!!

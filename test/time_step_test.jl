@@ -6,8 +6,8 @@ plot_flag = false
 plot_flag2 = false
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("ϕ_numerical", "ϕ_exact")
-create_fields(@__MODULE__, names = fieldnames, grid = fourier_grid)
-create_operators(@__MODULE__, fourier_grid)
+ϕ_numerical, ϕ_exact = create_fields(names = fieldnames, grid = fourier_grid)
+∂x = create_operators(fourier_grid)
 # initialize fields with nontrivial data
 x = fourier_grid.grid[1]
 ϕ_exact(sin.(x));

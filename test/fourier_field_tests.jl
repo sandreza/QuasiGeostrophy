@@ -8,7 +8,7 @@ const tol = 1e1
 Nx = 2^4; 
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5")
-create_fields(@__MODULE__, names = fieldnames, grid = fourier_grid)
+ϕ1, ϕ2, ϕ3, ϕ4, ϕ5 = create_fields(names = fieldnames, grid = fourier_grid)
 # initialize fields with nontrivial data
 x = fourier_grid.grid[1]
 ϕ1(sin.(x)); ϕ2(cos.(x));
@@ -23,7 +23,7 @@ x = fourier_grid.grid[1]
     @test norm(ϕ1 + ϕ2 - ϕ4)/norm(ϕ4) < eps(tol)
 end
 println(" ")
-create_operators(@__MODULE__, fourier_grid)
+∂x = create_operators(fourier_grid)
 
 @testset "1D Field Calculus Test" begin
     println("checking ∂x(ϕ1)  - ϕ2")
@@ -38,7 +38,7 @@ Nx = 2^4; Ny = 2^4;
 fourier_grid = FourierGrid((Nx, Ny), Ω)
 
 fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5", "ϕ6")
-create_fields(@__MODULE__, names = fieldnames, grid = fourier_grid)
+ϕ1, ϕ2, ϕ3, ϕ4, ϕ5, ϕ6 = create_fields(names = fieldnames, grid = fourier_grid)
 
 x, y = fourier_grid.grid
 ϕ1(sin.(x) .+ 0 .* y)
@@ -54,7 +54,7 @@ x, y = fourier_grid.grid
 end
 
 println(" ")
-create_operators(@__MODULE__, fourier_grid)
+∂x, ∂y = create_operators(fourier_grid)
 
 @testset "2D Field Calculus Test" begin
     println("checking ∂y(ϕ1) ")

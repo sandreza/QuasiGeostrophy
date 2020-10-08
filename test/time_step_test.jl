@@ -20,7 +20,7 @@ for scale in [1, 10^1, 10^2, 10^3, 10^4]
     push!(Δt_list, Δt)
     t = randn(1) .* 0
     for i in 1:10*scale
-        f = ∂x(ϕ_numerical)
+        local f = ∂x(ϕ_numerical)
         nϕ = ϕ_numerical + Δt * f
         ϕ_numerical.data .= nϕ.data
         if i%(scale) == 0
@@ -43,7 +43,7 @@ for scale in [1, 10^1, 10^2, 10^3, 10^4]
     push!(Δt_list_2, Δt)
     t = randn(1) .* 0
     for i in 1:10*scale
-        f = ∂x(ϕ_numerical)
+        local f = ∂x(ϕ_numerical)
         nϕ = ϕ_numerical + Δt * f
         nϕ = ϕ_numerical + Δt/2 * ( f +  ∂x(nϕ) )
         ϕ_numerical.data .= nϕ.data

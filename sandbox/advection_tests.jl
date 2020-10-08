@@ -1,11 +1,10 @@
-using Plots, QuasiGeostrophy, Test
+using Plots, QuasiGeostrophy
 # 1D Tests
 Ω = Torus(0,2π) 
 Nx = 2^8; 
 grid = FourierGrid(Nx, Ω)
-fieldnames = ("ϕ", "ϕ2")
-create_fields(@__MODULE__, names = fieldnames, grid = grid)
-create_operators(@__MODULE__, grid)
+ϕ, ϕ2 = create_fields(names = ("ϕ", "ϕ2"), grid = grid)
+∂x = create_operators(grid)
 #  initialize fields with nontrivial data
 #  Heuns Method
 x = grid.grid[1]
@@ -40,8 +39,8 @@ norm(ϕ-ϕ2)/norm(ϕ2)
 Nx = Ny =  2^6; 
 grid = FourierGrid((Nx, Ny), Ω)
 fieldnames = ("ϕ", "ϕ2", "u", "v", "ψ")
-create_fields(@__MODULE__, names = fieldnames, grid = fourier_grid)
-create_operators(@__MODULE__, grid)
+ϕ, ϕ2, u, v, ψ = create_fields(names = fieldnames, grid = grid)
+∂x, ∂y =  create_operators(grid)
 # initialize fields with nontrivial data
 #  Heuns Method
 x, y = grid.grid

@@ -7,10 +7,10 @@ function create_fields(; names = (),
                          arraytype = Array,
                          floattype = ComplexF64)
 # Description
-Automates the constructions of fourier fields with names
+Automates the constructions of fourier fields with names.
 
 # Arguments
-All the arguments are keyword arguments
+none
 
 # Keyword Arguments
 - `names`: tuple of strings
@@ -20,9 +20,76 @@ All the arguments are keyword arguments
 - `floattype`: default = ComplexF64
 
 # Return
+- Array of fourier field objects with names
+"""
+function create_fields(; names = (), 
+                         grid = nothing, 
+                         arraytype = Array,
+                         floattype = ComplexF64)
+    transform = Transform(grid)
+    dimensions = size(grid)
+    state = []
+    for name in names
+        fmd = FourierMetaData(name, grid, transform)
+        field_data = arraytype(zeros(floattype, dimensions...))
+        push!(state, FourierField(field_data, fmd))
+    end
+    return state
+end
+
+
+"""
+function create_operators(g::FourierGrid;
+                          names = ("x","y","z"),
+                          arraytype = Array)
+# Description
+A convenience function to automatically put operators in global scope
+
+# Arguments
+- `g`: FourierGrid. A fourier grid object
+
+# Keyword Arguments
+- `names`: name for operators assumes at most 3 dimensional
+
+# Return
+several operators
+"""
+function create_operators(g::FourierGrid;
+                          names = ("x","y","z"),
+                          arraytype = Array)
+    @assert length(names) <= 3
+    ops = []
+    for i in 1:length(g.grid)
+        operator_name = Char(0x02202) * names[i]
+        k = g.wavenumbers[i]
+        op = arraytype(im .* k)
+        fmd = FourierOperatorMetaData(operator_name)
+        push!(ops, FourierOperator(op, fmd))
+    end
+    return ops
+end
+
+## DO NOT USE THESE FUNCTIONS NORMALLY !!!!!
+"""
+function create_fields(mod::Module; names = (), 
+                         grid = nothing, 
+                         transform = nothing,
+                         arraytype = Array,
+                         floattype = ComplexF64)
+# Description
+Automates the constructions of fourier fields with names
+# Arguments
+- `mod`: Module for evaluating functions. Typically mod = @__MODULE__
+# Keyword Arguments
+- `names`: tuple of strings
+- `grid`: FourierGrid object
+- `transfrom`: Transform object
+- `arraytype`: default = Array, 
+- `floattype`: default = ComplexF64
+# Return
 nothing
 """
-function create_fields(mod; names = (), 
+function create_fields(mod::Module; names = (), 
                          grid = nothing, 
                          arraytype = Array,
                          floattype = ComplexF64)
@@ -48,22 +115,22 @@ function create_fields(mod; names = (),
 end
 
 """
-function create_operators(g::FourierGrid;
+function create_operators(mod::Module, g::FourierGrid;
                           names = ("x","y","z"),
                           arraytype = Array)
 # Description
-A convenience function to automatically put operators in global scope
+A convenience function to automatically put operators in global scope.
+Should only be used for quick tests.
 
 # Arguments
+- `mod`: Module for evaluating functions. Typically mod = @__MODULE__
 - `g`: FourierGrid. A fourier grid object
-
 # Keyword Arguments
 - `names`: name for operators assumes at most 3 dimensional
-
 # Return
 Nothing. But puts several Fourier Operators into the global scope
 """
-function create_operators(mod, g::FourierGrid;
+function create_operators(mod::Module, g::FourierGrid;
                           names = ("x","y","z"),
                           arraytype = Array)
     printstyled("Warning !!!", color = :red)

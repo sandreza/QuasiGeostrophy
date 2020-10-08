@@ -3,7 +3,7 @@ using LinearAlgebra, FFTW, BenchmarkTools, Plots
 
 a = 0; b = 22.0
 Δt = 1e-1 / 2
-Ω = Torus(a,b) # Domain
+Ω = S¹(a,b) # Domain
 Nx = 2^6;
 fourier_grid = FourierGrid(Nx, Ω) # Grid
 x = fourier_grid.grid[1]

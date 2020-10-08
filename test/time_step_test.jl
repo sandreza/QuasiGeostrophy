@@ -1,6 +1,6 @@
 using Plots, QuasiGeostrophy, Test
 include(pwd() * "/test/test_utils.jl")
-Ω = Torus(0,2π) 
+Ω = S¹(0,2π) 
 Nx = 2^3; 
 plot_flag = false
 plot_flag2 = false

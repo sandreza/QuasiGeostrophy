@@ -1,7 +1,7 @@
 using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 
 # boiler plate definitions
-Ωxy = Torus(0,2π) × Torus(0,2π)
+Ωxy = S¹(0,2π) × S¹(0,2π)
 Nx = 2^6; Ny = 2^6;
 fourier_grid = FourierGrid((Nx, Ny), Ωxy)
 x, y = fourier_grid.grid

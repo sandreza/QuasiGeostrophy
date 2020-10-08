@@ -1,7 +1,7 @@
 using QuasiGeostrophy, LinearAlgebra, Test, FFTW, BenchmarkTools, Plots
 
 a = 0; b = 2π
-Ω = Torus(a,b) # Domain
+Ω = S¹(a,b) # Domain
 Nx = 2^7;
 fourier_grid = FourierGrid(Nx, Ω) # Grid
 x = fourier_grid.grid[1]

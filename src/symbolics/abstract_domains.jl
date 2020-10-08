@@ -5,7 +5,7 @@ export AbstractDomain
 export AbstractBoundary
 
 export DomainBoundary
-export IntervalDomain, ProductDomain, Torus, Interval
+export IntervalDomain, ProductDomain, Circle, S¹, Interval
 export ×, dim, info, check_full_periodicity
 
 abstract type AbstractDomain end
@@ -24,10 +24,11 @@ function IntervalDomain(a, b; periodic=false)
     @assert a < b
     return IntervalDomain(a, b, periodic)
 end
-function Torus(a, b)
+function Circle(a, b)
     @assert a < b
     return IntervalDomain(a, b, periodic = true)
 end
+S¹ = Circle
 function Interval(a, b)
     @assert a < b
     return IntervalDomain(a, b)

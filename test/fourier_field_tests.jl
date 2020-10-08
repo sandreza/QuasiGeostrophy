@@ -4,7 +4,7 @@ include(pwd() * "/test/test_utils.jl")
 const tol = 1e1
 
 ## Define 1D Test
-Ω = Torus(0, 2π) 
+Ω = S¹(0, 2π) 
 Nx = 2^4; 
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("ϕ1", "ϕ2", "ϕ3", "ϕ4", "ϕ5")
@@ -33,7 +33,7 @@ println(" ")
 end
 
 ## Define 2D Test
-Ω = Torus(0,2π) × Torus(0,2π)
+Ω = S¹(0,2π) × S¹(0,2π)
 Nx = 2^4; Ny = 2^4;
 fourier_grid = FourierGrid((Nx, Ny), Ω)
 

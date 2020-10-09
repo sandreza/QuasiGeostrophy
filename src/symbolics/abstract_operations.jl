@@ -1,6 +1,7 @@
 
 export UnaryOperation, BinaryOperation, NaryOperation
 export AbstractOperation, Gradient
+export to_expr
 
 import Base: +, *, -, √, tanh, sin, cos, tan, ^, exp, convert, promote_rule
 
@@ -30,6 +31,8 @@ abstract type UnaryOperation  <: AbstractOperation end
 abstract type BinaryOperation <: AbstractOperation end
 abstract type NaryOperation <: AbstractOperation end
 
+# Define to_expr function
+to_expr(x) = x
 # Define Struct and Symbol Overload for Unary Operators
 for unary_operator in unary_operators
     b_name, b_symbol = Meta.parse.(unary_operator)
@@ -38,6 +41,7 @@ for unary_operator in unary_operators
     end
     # export $b_name
     @eval $b_symbol(a::AbstractExpression) = $b_name(a)
+    @eval to_expr(t::$b_name) = Expr(:call, $b_symbol, to_expr(t.term))
 end
 
 # Define Struct and Symbol Overload for Binary Operators
@@ -48,6 +52,7 @@ for binary_operator in binary_operators
         term2::𝒮
     end
     @eval $b_symbol(a::AbstractExpression, b::AbstractExpression) = $b_name(a, b)
+    @eval to_expr(t::$b_name) = Expr(:call, $b_symbol, to_expr(t.term1), to_expr(t.term2))
 end
 
 # Define Struct and Symbol Overload for n-ary Operators

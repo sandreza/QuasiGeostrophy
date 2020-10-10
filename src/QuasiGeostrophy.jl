@@ -26,8 +26,9 @@ include("symbolics/abstract_core.jl")
 # Grid Includes
 include("grid/grid_core.jl")
 
-# Include Hooks
+# Include Hooks to other packages
 include("utils/fourier_fields_hooks.jl")
+include("utils/fourier_operators_hooks.jl")
 include("utils/plot_hooks.jl")
 include("utils/convenience_functions.jl")
 

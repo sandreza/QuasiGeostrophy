@@ -1,4 +1,4 @@
-using Plots
+using Plots, GraphRecipes
 import Plots: plot
 export plot, spectrum
 
@@ -43,3 +43,5 @@ function spectrum(ϕ::FourierField)
     end
     return nothing
 end
+
+plot(a::AbstractExpression) = plot(to_expr(a))

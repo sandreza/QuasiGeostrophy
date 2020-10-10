@@ -76,7 +76,7 @@ for i in 1:100*scale
 end
 for i in 1:100*scale
     Δ = (∂x^2 + ∂y^2)^1
-    f =  -u * ∂x(ϕ) + -v * ∂y(  ϕ) + κ * Δ(ϕ)
+    f =  -u * ∂x(ϕ) + -v * ∂y(ϕ) + κ * Δ(ϕ)
     nϕ = ϕ + Δt * f
     nϕ = ϕ + Δt/2 * ( f +  -u * ∂x(nϕ) + -v * ∂y(nϕ)  + κ * Δ(nϕ))
     ϕ.data .= nϕ.data

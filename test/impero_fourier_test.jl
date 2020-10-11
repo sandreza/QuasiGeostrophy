@@ -36,4 +36,3 @@ end
     println("checking Δ(ϕ1) + ϕ1")
     @test norm(compute(Δ(ϕ1) + ϕ1))/norm(compute(ϕ1)) < eps(tol*10)
 end
-

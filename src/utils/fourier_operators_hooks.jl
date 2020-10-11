@@ -9,3 +9,4 @@ function compute(O::Operator{S, OperatorMetaData{T, U}}) where
     {S <: Nothing, T <: FourierOperator, U}
     return O.metadata.operation
 end
+

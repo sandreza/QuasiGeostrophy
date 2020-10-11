@@ -5,9 +5,18 @@ export @pde_system, @to_equation
 abstract type AbstractSystem end
 abstract type AbstractEquation end
 
+#=
+# need this for augmenting equations dynamically
+# but maybe not necessary
 mutable struct Equation <: AbstractEquation
     lhs
     rhs
+end
+# preliminary tests show loss of performance
+=#
+struct Equation{S,T} <: AbstractEquation
+    lhs::T
+    rhs::S
 end
 
 function _to_equation(expr)

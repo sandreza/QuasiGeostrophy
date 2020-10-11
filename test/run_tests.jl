@@ -14,3 +14,6 @@ include(pwd() * "/test/impero_fourier_test.jl")
 
 # Timestepping Test
 include(pwd() * "/test/time_step_test.jl")
+
+# to_expr test
+include(pwd() * "/test/to_expr_test.jl")

@@ -12,7 +12,7 @@ x = grid.grid[1]
 scale = round(Int, 1/(x[2]-x[1]))
 ν = 10000
 κ = 0e-4
-iv = @. tanh( ν * (x - π/2)) * tanh(ν * (x - 3π/2) )
+iv = @. tanh( ν * (x - π/2) ) * tanh( ν * (x - 3π/2) )
 ϕ(iv)
 ϕ2(iv)
 plot(ϕ)

@@ -1,12 +1,14 @@
 using QuasiGeostrophy, FFTW, Test, BenchmarkTools
 using LinearAlgebra
-import QuasiGeostrophy: to_expr
+using Plots, GraphRecipes
+using SymbolicUtils
+import SymbolicUtils: Chain, Postwalk
 include(pwd() * "/test/test_utils.jl")
 const tol = 1e1
 
 ## Define 1D Test
 Ω = S¹(0, 2π) 
-Nx = 2^7; 
+Nx = 2^8; 
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("u", "σ", "v")
 u, σ, v = create_fields(names = fieldnames, grid = fourier_grid)
@@ -15,18 +17,18 @@ u, σ, v = create_fields(names = fieldnames, grid = fourier_grid)
 x = fourier_grid.grid[1]
 u(sin.(x) .+ 1); σ(cos.(x));
 v( sin.(x));
-# Wrap Around Impero Object
+starting_energy = (u*u).data[1]
+# Wrap Around Impero Objects
 @wrapper u=u v=v σ=σ
 Δ  = Operator(∂x^2)
 ∂x = Operator(∂x)
-κ = 0.0
-∂t = Operator(nothing, OperatorMetaData(nothing, "∂t"))
+κ = 10.0/Nx
 
+∂t = Operator(nothing, OperatorMetaData(nothing, "∂t"))
 @pde_system pde_system = [
-    ∂t(u) = -∂x(u) + κ*Δ(u),
+    ∂t(u) = -∂x(u^2) + κ*Δ(u),
 ]
-to_expr(eq::Equation) = Expr(:(=), to_expr(eq.lhs), to_expr(eq.rhs))
-plot(to_expr(pde_system[1]))
+pde_plot = plot(pde_system[1]);
 abstract type TimeSteppingMethod end
 struct  RK1 <: TimeSteppingMethod end #include Δt as a part of RK1
 struct  RK2 <: TimeSteppingMethod end
@@ -48,11 +50,18 @@ function evolve_pde(pde_system, Δt, ::RK2)
     return nothing
 end
 
-for i in 1:1000
-    evolve_pde(pde_system, 0.01, RK2())
-    if i%10==0
-        p1 = plot(u.data)
+const Δt = 0.1 / Nx  
+T = 1
+steps = round(Int, T / Δt) 
+plotsteps = round(Int, steps / 10)
+for i in 1:steps
+    evolve_pde(pde_system, Δt, RK2())
+    if i%plotsteps==0
+        p1 = plot(u.data, ylims = (0,2))
         display(p1)
         sleep(0.01)
     end
 end
+
+ending_energy = evaluate(u * u)[1]
+energy_loss = (starting_energy - ending_energy)/starting_energy * 100

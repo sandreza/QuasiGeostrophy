@@ -2,7 +2,7 @@ using Plots, GraphRecipes
 import Plots: plot
 export plot, spectrum
 
-function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
+function plot(ϕ::FourierField{S, T}; ylims = ()) where {S, T <: FourierMetaData}
     dims = length(ϕ.metadata.grid.grid)
     if dims == 1
         x = ϕ.metadata.grid.grid[1][:]
@@ -10,7 +10,7 @@ function plot(ϕ::FourierField{S, T}) where {S, T <: FourierMetaData}
         plot(x, real.(dd))
         plot!(xlabel = "x")
         plot!(ylabel = ϕ.metadata.name)
-        plot!(legend = false,)
+        plot!(legend = false, ylims = ylims)
     elseif dims == 2
         x = ϕ.metadata.grid.grid[1][:]
         y = ϕ.metadata.grid.grid[2][:]
@@ -45,3 +45,4 @@ function spectrum(ϕ::FourierField)
 end
 
 plot(a::AbstractExpression) = plot(to_expr(a))
+plot(a::Equation) = plot(to_expr(a))

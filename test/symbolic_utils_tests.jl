@@ -21,4 +21,9 @@ include(pwd() * "/test/test_utils.jl")
     check_c = sin(a*b) * sin(a*a*b)
     new_c = Fixpoint(Postwalk(Chain([r1])))(c)
     @test compute(check_c) == compute(new_c)
+    println("Checking a*a = a^2 with rewrite rules")
+    r2 = @acrule ~ra * ~ra => Exponentiation(~ra , 2)
+    c = a * a
+    new_c = Fixpoint(Postwalk(Chain([r2])))(c)
+    @test (new_c != c) * (compute(c) == compute(new_c))
 end

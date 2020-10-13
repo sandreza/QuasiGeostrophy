@@ -7,7 +7,7 @@ QuasiGeostrophy
 """
 module QuasiGeostrophy
 # Using
-using LinearAlgebra
+using LinearAlgebra, CUDA
 # Spatial Discretization Includes
 include("spatial_discretization/nodal_chebyshev.jl")
 include("spatial_discretization/fourier_core.jl")

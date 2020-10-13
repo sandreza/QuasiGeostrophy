@@ -10,8 +10,8 @@ grid = FourierGrid(Nx, Ω)
 x = grid.grid[1]
 
 scale = round(Int, 1/(x[2]-x[1]))
-ν = 10000
-κ = 0e-4
+ν = 10^4
+κ = 1e-4
 iv = @. tanh( ν * (x - π/2) ) * tanh( ν * (x - 3π/2) )
 ϕ(iv)
 ϕ2(iv)
@@ -23,10 +23,13 @@ for i in 1:100*scale
     Δ = ∂x^2
     f = ∂x(ϕ) + κ * Δ(ϕ)
     nϕ = ϕ + Δt * f
-    nϕ = ϕ + Δt/2 * ( f +  ∂x(nϕ)  + κ * Δ(nϕ))
+    g  = ∂x(nϕ)  + κ * Δ(nϕ)
+    nϕ = ϕ + Δt/2 * ( f +  g)
     ϕ.data .= nϕ.data
     if i%(scale) == 0
-        display(plot(ϕ))
+        p1 = plot(ϕ)
+        p2 = spectrum(ϕ)
+        display(plot(p1,p2))
         sleep(0.01)
     end
     t[1] += Δt

@@ -8,7 +8,7 @@ const tol = 1e1
 
 ## Define 1D Test
 Ω = S¹(0, 2π) 
-Nx = 2^8; 
+Nx = 2^9; 
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("u", "σ", "v")
 u, σ, v = create_fields(names = fieldnames, grid = fourier_grid)
@@ -24,10 +24,13 @@ starting_energy = (u*u).data[1]
 ∂x = Operator(∂x)
 κ = 10.0/Nx
 
+# This is just syntax for now
 ∂t = Operator(nothing, OperatorMetaData(nothing, "∂t"))
+
 @pde_system pde_system = [
     ∂t(u) = -∂x(u^2) + κ*Δ(u),
 ]
+
 pde_plot = plot(pde_system[1]);
 abstract type TimeSteppingMethod end
 struct  RK1 <: TimeSteppingMethod end #include Δt as a part of RK1

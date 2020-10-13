@@ -35,7 +35,7 @@ println(norm(ϕ-ϕ2)/norm(ϕ2))
 ## 2D Tests
 # 2D Test
 Ω = S¹(0,2π) × S¹(0,2π)
-Nx = Ny =  2^7; 
+Nx = Ny =  2^8; 
 grid = FourierGrid((Nx, Ny), Ω, arraytype = arraytype)
 fieldnames = ("ϕ", "ϕ2", "u", "v", "ψ")
 ϕ, ϕ2, u, v, ψ = create_fields(names = fieldnames, grid = grid, arraytype = arraytype)
@@ -46,7 +46,7 @@ fieldnames = ("ϕ", "ϕ2", "u", "v", "ψ")
 x, y = grid.grid
 scale = round(Int, 1/(x[2]-x[1]))
 ν = 10000
-κ = 0e-2
+κ = 1e-4
 iv = @. tanh( ν*(x - π/2)) * tanh(ν*(x - 3π/2) ) * tanh( ν*(y - π/2)) * tanh(ν*(y - 3π/2) )
 ϕ(iv)
 ϕ2(iv)

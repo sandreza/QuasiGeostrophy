@@ -10,26 +10,28 @@ end
 import Base: getindex
 getindex(f::FourierGrid, i) = f.grid[i]
 
-function FourierGrid(grid_points, Ω::IntervalDomain) # perhaps change to match the product domain
+function FourierGrid(grid_points, Ω::IntervalDomain; arraytype = Array) # perhaps change to match the product domain
     @assert length(grid_points) == 1
     @assert Ω.periodic
-    grid = fourier_nodes(grid_points, a = Ω.a, b = Ω.b)
-    wavenumbers = fourier_wavenumbers(grid_points, L = Ω.b - Ω.a)
+    grid = arraytype(fourier_nodes(grid_points, a = Ω.a, b = Ω.b))
+    wavenumbers = arraytype(fourier_wavenumbers(grid_points, L = Ω.b - Ω.a))
     return FourierGrid([grid], [wavenumbers], Ω)
 end
 
 """
-FourierGrid(grid_points, Ω::ProductDomain)
+FourierGrid(grid_points, Ω::ProductDomain, arraytype=Array)
 # Description
 Create a numerical grid with grid_points resolution in the domain Ω \n 
 Only works for fully periodic grids at the moment
 # Arguments
 - `grid_points`: tuple | a tuple of ints in each direction for product domain
 - `Ω`: ProductDomain   | a product domain object
+# Keyword Arguments
+- arraytype = Array
 # Return
 A Fourier Grid object
 """
-function FourierGrid(grid_points, Ω::ProductDomain) # change to be fully general later
+function FourierGrid(grid_points, Ω::ProductDomain; arraytype=Array) # change to be fully general later
     @assert length(grid_points) == length(Ω.domains)
     grid = []
     wavenumbers = []
@@ -37,8 +39,8 @@ function FourierGrid(grid_points, Ω::ProductDomain) # change to be fully genera
     for (i,domain) in enumerate(Ω.domains)
         L = domain.b - domain.a
         reshape_dims = appropriate_dims(length(Ω.domains), i, grid_points[i])
-        push!(grid, reshape(fourier_nodes(grid_points[i], a = domain.a, b = domain.b), reshape_dims))
-        push!(wavenumbers, reshape(fourier_wavenumbers(grid_points[i], L = L), reshape_dims))
+        push!(grid, arraytype(reshape(fourier_nodes(grid_points[i], a = domain.a, b = domain.b), reshape_dims)))
+        push!(wavenumbers, arraytype(reshape(fourier_wavenumbers(grid_points[i], L = L), reshape_dims)))
     end
     return FourierGrid(grid, wavenumbers, Ω)
 end

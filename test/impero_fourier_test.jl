@@ -18,6 +18,8 @@ x = fourier_grid.grid[1]
 ϕ5( @. cos(x)^2 - sin(x)^2 );
 # Wrap Around Impero Object
 @wrapper ϕ1=ϕ1 ϕ2=ϕ2 ϕ3=ϕ3 ϕ4=ϕ4 ϕ5=ϕ5
+Δ  = Operator(∂x^2)
+∂x = Operator(∂x)
 
 @testset "1D Algebra Test" begin
     println("checking ϕ1 * ϕ2 - ϕ3")
@@ -26,4 +28,11 @@ x = fourier_grid.grid[1]
     @test norm(compute(ϕ1 + ϕ2 - ϕ4))/norm(compute(ϕ4)) < eps(tol)
     println("checking ϕ1 + ϕ1 - 2 * ϕ1")
     @test norm(compute(ϕ1 + ϕ1- 2*ϕ1))/norm(compute(ϕ1)) < eps(tol)
+end
+
+@testset "1D Calculus Test" begin
+    println("checking ∂x(ϕ1) - ϕ2")
+    @test norm(compute(∂x(ϕ1) - ϕ2))/norm(compute(ϕ2)) < eps(tol)
+    println("checking Δ(ϕ1) + ϕ1")
+    @test norm(compute(Δ(ϕ1) + ϕ1))/norm(compute(ϕ1)) < eps(tol*10)
 end

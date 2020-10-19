@@ -38,7 +38,7 @@ for binary_operator in [binary_operators..., ["Negative", "-"]]
 end
 
 # exception for multiplication of fourier fields
-for binary_operator in [binary_operators[1], binary_operators[3], ["Negative", "-"]]
+for binary_operator in [binary_operators[1], ["Negative", "-"]]
     b_symbol = Meta.parse.(binary_operator[2]) 
     @eval function $b_symbol(field1::FourierField, field2::FourierField)
         data = broadcast($b_symbol, field1.data, field2.data)
@@ -64,6 +64,17 @@ function *(f̂::FourierField, ĝ::FourierField)
     name = "(" * name1 * "*" * name2 * ")"
     fmd = FourierMetaData(name, metadata.grid, metadata.transform)
     return FourierField(fwd * fg, fmd)
+end
+function ^(f̂::FourierField, n::Number)
+    fwd = f̂.metadata.transform.forward
+    bwd = f̂.metadata.transform.backward
+    f = bwd * f̂.data
+    ff = broadcast(^, f, n)
+    metadata  = f̂.metadata
+    name1 = f̂.metadata.name
+    name = "(" * name1 * ")" * "^" * string(n)
+    fmd = FourierMetaData(name, metadata.grid, metadata.transform)
+    return FourierField(fwd * ff, fmd)
 end
 
 compute(a::FourierField) = a

@@ -26,7 +26,7 @@ function create_fields(; names = (),
                          grid = nothing, 
                          arraytype = Array,
                          floattype = ComplexF64)
-    transform = Transform(grid)
+    transform = Transform(grid, arraytype=arraytype)
     dimensions = size(grid)
     state = []
     for name in names
@@ -101,7 +101,7 @@ function create_fields(mod::Module; names = (),
                          grid = nothing, 
                          arraytype = Array,
                          floattype = ComplexF64)
-    transform = Transform(grid)
+    transform = Transform(grid, arraytype=arraytype)
     printstyled("Warning!!! ", color = :red)
     print("the name(s) ")
     printstyled("(", color = :blue)

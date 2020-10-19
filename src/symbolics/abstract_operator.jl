@@ -1,4 +1,5 @@
-export Operator, DerivativeMetaData
+export Operator, DerivativeMetaData, OperatorMetaData
+export compute
 
 struct Operator{𝒮, 𝒯} <: AbstractExpression
     operand::𝒮
@@ -36,3 +37,24 @@ function Base.show(io::IO, o::Operator{S,T}) where
     print(o.operand)
     printstyled(io, ")",  color = 14 )
 end
+
+struct OperatorMetaData{𝒪, 𝒩}
+    operation::𝒪
+    name::𝒩
+end
+
+function Base.show(io::IO, o::Operator{S,T}) where
+    {S <: Nothing, T <: OperatorMetaData}
+    name = o.metadata.name
+    printstyled(io, name, color = 14 )
+end
+
+function Base.show(io::IO, o::Operator{S,T}) where 
+    {S <: AbstractExpression, T <: OperatorMetaData}
+    name = o.metadata.name
+    printstyled(io, name, "(",  color = 14 )
+    print(o.operand)
+    printstyled(io, ")",  color = 14 )
+end
+
+to_expr(t::Operator) = Expr(:call, t, to_expr(t.operand))

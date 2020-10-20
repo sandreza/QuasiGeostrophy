@@ -17,3 +17,6 @@ include(pwd() * "/test/time_step_test.jl")
 
 # to_expr test
 include(pwd() * "/test/to_expr_test.jl")
+
+# Domain test
+include(pwd() * "/test/domain_test.jl")

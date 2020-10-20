@@ -1,4 +1,4 @@
-
+using Printf
 import LinearAlgebra: ×
 
 export AbstractDomain
@@ -67,6 +67,9 @@ function dim(Ω::ProductDomain)
 end
 
 ×(arg1::AbstractDomain, arg2::AbstractDomain) = ProductDomain((arg1, arg2))
+×(args::ProductDomain, arg2::AbstractDomain) = ProductDomain((args.domains..., arg2))
+×(arg1::AbstractDomain, args::ProductDomain) = ProductDomain((arg1, args.domains...))
+×(arg1::ProductDomain, args::ProductDomain) = ProductDomain((arg1.domains..., args.domains...))
 ×(args::AbstractDomain) = ProductDomain(args...)
 
 function info(Ω::ProductDomain)
@@ -75,7 +78,9 @@ function info(Ω::ProductDomain)
     println(Ω, ".")
     for (i,domain) in enumerate(Ω.domains)
         domain_string = domain.periodic ? "periodic" : "wall-bounded"
-        println("The dimension $i domain is ", domain_string, " with length ", domain.b-domain.a)
+        length = @sprintf("%.2f ", domain.b-domain.a)
+        println("The dimension $i domain is ", domain_string, " with length ≈ ", length)
+        
     end
     return nothing
 end

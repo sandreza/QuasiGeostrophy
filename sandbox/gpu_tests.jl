@@ -1,6 +1,6 @@
 using QuasiGeostrophy, CUDA, BenchmarkTools, FFTW
 # 1D Tests file: include("sandbox/gpu_tests.jl")
-Ω = S¹(0,2π)
+Ω = S¹(0,2π) 
 Nx = 2^8; 
 arraytype = CuArray
 grid = FourierGrid(Nx, Ω, arraytype = arraytype)

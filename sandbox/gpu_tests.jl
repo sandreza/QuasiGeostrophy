@@ -35,13 +35,15 @@ println(norm(ϕ-ϕ2)/norm(ϕ2))
 ## 2D Tests
 # 2D Test
 Ω = S¹(0,2π) × S¹(0,2π)
-Nx = Ny =  2^8; 
+Nx = Ny =  2^12; 
 grid = FourierGrid((Nx, Ny), Ω, arraytype = arraytype)
 fieldnames = ("ϕ", "ϕ2", "u", "v", "ψ")
 ϕ, ϕ2, u, v, ψ = create_fields(names = fieldnames, grid = grid, arraytype = arraytype)
 ∂x, ∂y =  create_operators(grid, arraytype = arraytype)
 Δ =  FourierOperator(∂x.op .* ∂x.op .+ ∂y.op .* ∂y.op,FourierOperatorMetaData("Δ"))
 # initialize fields with nontrivial data
+P = ϕ.metadata.transform.forward
+iP = ϕ.metadata.transform.backward
 #  Heuns Method
 x, y = grid.grid
 scale = round(Int, 1/(x[2]-x[1]))
@@ -55,6 +57,8 @@ t = randn(1) .* 0
 u( (x .+ y) .* 0 .+1 )
 v( (x .+ y) .* 0 .+1 )
 ψ(@. sin(x/2) * sin(y/2))
+u = ∂y(ψ)
+v = - ∂x(ψ)
 norm(∂x(u) + ∂y(v))
 for i in 1:100*scale
     f = u * ∂x(ϕ) + v * ∂y(ϕ) + κ * Δ(ϕ)

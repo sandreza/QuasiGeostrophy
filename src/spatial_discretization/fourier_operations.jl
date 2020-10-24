@@ -37,6 +37,10 @@ function +(p::FourierOperator, q::FourierOperator)
     return FourierOperator(p.op .+ q.op)
 end
 
+function *(p::FourierOperator, q::FourierOperator)
+    return FourierOperator(p.op .* q.op)
+end
+
 function +(p::FourierOperator, q::Number)
     return FourierOperator(p.op .+ q)
 end
@@ -68,6 +72,13 @@ function +(p::FourierOperator{𝒮, 𝒯}, q::FourierOperator{𝒮, 𝒯}) where
     name = "(" * p.metadata.name * "+" * q.metadata.name * ")"
     fomd = FourierOperatorMetaData(name)
     return FourierOperator(p.op .+ q.op, fomd)
+end
+
+function *(p::FourierOperator{𝒮, 𝒯}, q::FourierOperator{𝒮, 𝒯}) where
+    {𝒮, 𝒯 <: FourierOperatorMetaData}
+    name = "(" * p.metadata.name * "*" * q.metadata.name * ")"
+    fomd = FourierOperatorMetaData(name)
+    return FourierOperator(p.op .* q.op, fomd)
 end
 
 function +(p::FourierOperator{𝒮, 𝒯}, q::Number) where

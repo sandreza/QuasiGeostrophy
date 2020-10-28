@@ -6,6 +6,9 @@ include("fourier_fields.jl")
 function (∇::FourierOperator)(ϕ::FourierField)
     return FourierField(∇.op .* ϕ.data, ϕ.metadata)
 end
+function *(∇::FourierOperator, ϕ::FourierField)
+    return FourierField(∇.op .* ϕ.data, ϕ.metadata)
+end
 # Define Naming
 function (∇::FourierOperator{S, T})(ϕ::FourierField) where
     {S, T <: FourierOperatorMetaData}

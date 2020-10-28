@@ -40,6 +40,16 @@ function spectrum(ϕ::FourierField)
         scatter!(ylabel = "log10(spectral amplitude)")
         scatter!(ylims = (ymin, ymax))
         return p1
+    elseif dims == 2
+        g = log10.(abs.(ϕ.data))
+        cmax = maximum(g) * 1.1
+        cmin = maximum(g)  - 16
+        clims = (cmin, cmax)
+        p1 = heatmap(g, clims = clims, color = :thermometer)
+        scatter!(xlabel = "x, wavenumber index")
+        scatter!(ylabel = "y, wavenumber index")
+        scatter!(title = "log10(spectral amplitude)")
+        return p1
     end
     return nothing
 end

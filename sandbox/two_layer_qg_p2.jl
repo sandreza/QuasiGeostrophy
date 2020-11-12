@@ -12,15 +12,15 @@ q¹, q², ψ¹, ψ², f = create_fields(names = fieldnames, grid = fourier_grid,
 # Operators
 ∂x, ∂y = create_operators(fourier_grid, arraytype = array)
 Δ = ∂x*∂x + ∂y*∂y  # multiplication for GPU purposes
-Δ⁴ = -Δ #* -Δ * -Δ * -Δ  # multiplication for GPU purposes
-# Parameters
-const λ  = 0.2
-const U  = 0e-0 
-const κ  = 1.0
-Δt = 3e-1 / Nx
-const L  = 1.0
-const Q  = 0.5  
-ν = 1e-1/maximum(abs.((Δ⁴.op)))/Δt # largest stable damping
+Δ⁴ = -Δ  #* -Δ * -Δ * -Δ  # multiplication for GPU purposes
+# Parameters (λ/L)² = 0.01 => λ = 0.1 L 
+const λ  = 0.01*2π # Rossby deformation radius, √(gravity * depth) / (coriolis force)
+const U  = 1e-4    # background velocity in the top layer, - in bottom
+const κ  = 1.0     # bottom drag
+const Q  = 0.5     # surface temperature flux
+
+Δtᵐᵃˣ = 1e-1 / Nx     # Largest timestep size
+ν = 1e-0/maximum(abs.((Δ⁴.op)))/Δtᵐᵃˣ  # largest stable damping
 # initialize stream functions in layers
 x, y = fourier_grid.grid
 ψ¹( 1.0 * (sin.(x) .* sin.(y) .- 1.0 * sin.(y)) )
@@ -63,15 +63,15 @@ cutoff_filter = FourierOperator(op, fmd)
 ## Timestepping in qg_utils
 vort1 = []
 vort2 = []
-for i in 1:2000
+for i in 1:10000
     # adaptive timestepping
     Δt = 0.3 * cfl(ψ¹, ψ², ∂x, ∂y)
-    Δt = minimum([Δt, 3e-1 / Nx])
-    evolve_system(qg_system, Δt, filter = 1)
+    Δt = minimum([Δt, Δtᵐᵃˣ])
+    evolve_system(qg_system, Δt)
 
     if i%100==0
         println("hi at "* string(i))
-        #=
+        
         p1 = plot(q¹.data)
         p2 = plot(q².data)
         display(plot(p1,p2))
@@ -85,7 +85,7 @@ for i in 1:2000
         println(Δt)
         println("The CFL is ")
         println(Δt/cfl(ψ¹, ψ², ∂x, ∂y) )
-        =#
+        
         P = q¹.data.metadata.transform.backward
         push!( vort1 , real.(P * q¹.data.data))
         push!( vort2 , real.(P * q².data.data))      
@@ -97,7 +97,7 @@ plot(q¹.data)
 plot(q².data)
 
 spectrum(q¹.data-q².data)
-
+pyplot()
 tmp = q¹.data.metadata.transform.backward * (q¹.data.data - q².data.data)
 contourf(real.(tmp'), color = :thermometer, linewidth = 0, contourlevlels = 30)
 y = sum(real.(tmp'), dims = 2) ./Nx

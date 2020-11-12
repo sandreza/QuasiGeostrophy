@@ -15,12 +15,13 @@ u, σ, v = create_fields(names = fieldnames, grid = fourier_grid)
 ∂x = create_operators(fourier_grid)
 # initialize FourierField data
 x = fourier_grid.grid[1]
-u(sin.(x) .+ 0.0); σ(cos.(x));
+u(sin.(x) .+ 1.0); σ(cos.(x));
 v( sin.(x));
 starting_energy = (u*u).data[1]
 # Wrap Around Impero Objects
 @wrapper u=u v=v σ=σ
 Δ  = Operator(∂x^2)
+Δ²  = Operator(∂x^4)
 ∂x = Operator(∂x)
 κ = 10.0/Nx
 
@@ -28,7 +29,7 @@ starting_energy = (u*u).data[1]
 ∂t = Operator(nothing, OperatorMetaData(nothing, "∂t"))
 
 @pde_system pde_system = [
-    ∂t(u) = -∂x(u^2) + κ*Δ(u),
+    ∂t(u) = -∂x(u^2) + κ*Δ(u) - 1e-6*Δ²(u),
 ]
 
 pde_plot = plot(pde_system[1]);

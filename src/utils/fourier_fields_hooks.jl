@@ -55,8 +55,8 @@ end
 function *(f̂::FourierField, ĝ::FourierField)
     fwd = f̂.metadata.transform.forward
     bwd = f̂.metadata.transform.backward
-    f = bwd * f̂.data
-    g = bwd * ĝ.data
+    f = real.(bwd * f̂.data)
+    g = real.(bwd * ĝ.data)
     fg = broadcast(*, f, g)
     metadata  = ĝ.metadata
     name1 = f̂.metadata.name
@@ -68,7 +68,7 @@ end
 function ^(f̂::FourierField, n::Number)
     fwd = f̂.metadata.transform.forward
     bwd = f̂.metadata.transform.backward
-    f = bwd * f̂.data
+    f = real.(bwd * f̂.data)
     ff = broadcast(^, f, n)
     metadata  = f̂.metadata
     name1 = f̂.metadata.name

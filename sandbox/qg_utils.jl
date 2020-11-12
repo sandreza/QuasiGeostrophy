@@ -60,3 +60,25 @@ function evolve_system(qg_system, Δt; filter = 1)
     qg_system[4].lhs.operand.data.data .= filter * data[2]
     return nothing
 end
+#
+function cfl(ψ¹, ψ², ∂x, ∂y)
+    F = ψ¹.data.metadata.transform.backward
+    x,y = ψ¹.data.metadata.grid.grid
+    Δx = x[2] - x[1]
+    Δy = y[2] - y[1]
+    u1 = F * evaluate(∂y(ψ¹))
+    v1 = F * evaluate(∂x(ψ¹))
+    u2 = F * evaluate(∂y(ψ¹))
+    v2 = F * evaluate(∂x(ψ¹))
+    u1 = maximum(abs.(u1))
+    v1 = maximum(abs.(v1))
+    u2 = maximum(abs.(u2))
+    v2 = maximum(abs.(v2))
+    return maximum([Δx / u1, Δx / u2, Δy / u2, Δy / v2])
+end
+
+# building some cutoff filters
+function cutoff(k, cutoff)
+    return k > cutoff ? 0.0 : 1.0
+end
+ 

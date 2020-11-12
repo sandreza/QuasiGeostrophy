@@ -74,7 +74,7 @@ function cfl(ψ¹, ψ², ∂x, ∂y)
     v1 = maximum(abs.(v1))
     u2 = maximum(abs.(u2))
     v2 = maximum(abs.(v2))
-    return maximum([Δx / u1, Δx / u2, Δy / u2, Δy / v2])
+    return minimum([Δx / u1, Δx / u2, Δy / u2, Δy / v2])
 end
 
 # building some cutoff filters

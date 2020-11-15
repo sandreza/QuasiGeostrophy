@@ -68,13 +68,13 @@ function cfl(ψ¹, ψ², ∂x, ∂y)
     Δy = y[2] - y[1]
     u1 = F * evaluate(∂y(ψ¹))
     v1 = F * evaluate(∂x(ψ¹))
-    u2 = F * evaluate(∂y(ψ¹))
-    v2 = F * evaluate(∂x(ψ¹))
+    u2 = F * evaluate(∂y(ψ²))
+    v2 = F * evaluate(∂x(ψ²))
     u1 = maximum(abs.(u1))
     v1 = maximum(abs.(v1))
     u2 = maximum(abs.(u2))
     v2 = maximum(abs.(v2))
-    return minimum([Δx / u1, Δx / u2, Δy / u2, Δy / v2])
+    return minimum([Δx / u1, Δx / u2, Δy / v1, Δy / v2]) # gives a Δt
 end
 
 # building some cutoff filters

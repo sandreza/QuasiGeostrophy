@@ -30,7 +30,7 @@ end
 
 # convenience function to initialize array
 function (ϕ::FourierField)(a::AbstractArray)
-    f1 = ϕ.metadata.transform.forward * (a .+ 0im*ϕ.data)
+    f1 = ϕ.metadata.transform.forward * (a .+ 0im * (ϕ.data .* false))
     ϕ.data .= f1
     return nothing
 end

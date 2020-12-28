@@ -5,10 +5,10 @@ using SymbolicUtils
 import SymbolicUtils: Chain, Postwalk
 include(pwd() * "/test/test_utils.jl")
 const tol = 1e1
-
+gr(size = (300,300))
 ## Define 1D Test
-Ω = S¹(0, 2π)
-Nx = 2^9; 
+Ω = S¹(0, 2π) 
+Nx = Ny = Nz = 2^3; 
 fourier_grid = FourierGrid(Nx, Ω)
 fieldnames = ("u", "σ", "v")
 u, σ, v = create_fields(names = fieldnames, grid = fourier_grid)

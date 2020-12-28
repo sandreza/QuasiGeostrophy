@@ -86,6 +86,7 @@ function create_fields(mod::Module; names = (),
                          floattype = ComplexF64)
 # Description
 Automates the constructions of fourier fields with names
+DO NOT USE THESE FUNCTIONS NORMALLY !!!!!
 # Arguments
 - `mod`: Module for evaluating functions. Typically mod = @__MODULE__
 # Keyword Arguments
@@ -129,6 +130,7 @@ function create_operators(mod::Module, g::FourierGrid;
 # Description
 A convenience function to automatically put operators in global scope.
 Should only be used for quick tests.
+    DO NOT USE THESE FUNCTIONS NORMALLY !!!!!
 
 # Arguments
 - `mod`: Module for evaluating functions. Typically mod = @__MODULE__

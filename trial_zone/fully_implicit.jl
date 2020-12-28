@@ -48,34 +48,30 @@ function Residual(uⁿ⁺¹, uⁿ, ν, Δt)
     u̇ⁿ⁺¹ = - ∂x( 0.5 * uⁿ⁺¹ * uⁿ⁺¹) + ν * Δ(uⁿ⁺¹)
     return uⁿ-uⁿ⁺¹ + Δt * u̇ⁿ⁺¹ 
 end
+
 # Create Jacobian Matrix for "Exact" Jacobian
 function create_matrix(J, δu)
     n = length(δu.data)
     A = zeros(eltype(δu.data),(n,n))
     δu.data .= 0
     for i in 1:n
-        for j in [1.0, 1.0im]
-            δu.data[i] = j
-            jA = J(δu).data
-            A[i,:] .+= jA
-            δu.data[i] = 0.0
-        end
+        δu.data[i] = 1.0
+        jA = J(δu).data
+        A[i,:] .+= jA
+        δu.data[i] = 0.0
     end
     return A
 end
 
 ##
-u.data .= 0.0
-v.data .= 0.0
-δu.data .= 0.0
 u(sin.(x) .+ 0.5); σ(cos.(x));
 v(sin.(x));
 
 const Δt = 1.0 / Nx  
 const ν = 0.0/(2π)^2 * Δx^2 / Δt
 
-# Forward-Euler
-# uⁿ⁺¹ = uⁿ + Δt u̇ⁿ
+# Backward-Euler
+# uⁿ⁺¹ = uⁿ + Δt u̇ⁿ⁺¹
 T = 1.5
 steps = round(Int, T / Δt) 
 plotsteps = round(Int, steps / 10)
@@ -100,3 +96,27 @@ for i in 1:steps
     println("residual at ", i, " now is ", norm(residual))
 end
 
+## Semiplicit
+# solve uⁿ⁺¹ - Δt *( ∂x( 0.5 * uⁿ * uⁿ⁺¹) - νΔuⁿ⁺¹ ) = uⁿ
+# Semi-Implicit
+
+const Δt = 0.1 / Nx  
+const ν = 0.0/(2π)^2 * Δx^2 / Δt
+
+T = 1.5
+steps = round(Int, T / Δt) 
+plotsteps = round(Int, steps / 10)
+
+function semiplicit(u, δu, ν, Δt)
+    return δu - Δt *( 0.5*∂x(u * δu) - ν*Δ(δu) )
+end
+
+u(sin.(x) .+ 0.5); σ(cos.(x));
+v(sin.(x));
+
+for i in 1:steps
+    S(δu) = semiplicit(u, δu, ν, Δt)
+    A = create_matrix(S, δu)
+    v.data .= u.data
+    u.data .= A \ v.data
+end
